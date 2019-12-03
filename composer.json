@@ -1,0 +1,23 @@
+{
+    "name": "bshaffer/phpunit-retry-annotations",
+    "description": "Traits for retrying test methods and classes in PHPUnit",
+    "keywords": ["test", "retry", "phpunit"],
+    "homepage": "https://github.com/bshaffer/phpunit-retry",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Brent Shaffer",
+            "email": "bshafs@gmail.com",
+            "homepage": "https://brentertainment.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PHPUnitRetry\\": "src/"
+        }
+    }
+}
