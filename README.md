@@ -36,7 +36,7 @@ There are **two** main ways to configure retries:
             // test something flakey three times
         }
     }
-```
+    ```
 
 1. Retry until a specific duration has passed
     ```php
@@ -49,7 +49,7 @@ There are **two** main ways to configure retries:
 
         public function testSomethingFlakeyFor90Seconds()
         {
-            // retries for 60 seconds
+            // retries for 90 seconds
         }
 
         /**
@@ -60,37 +60,40 @@ There are **two** main ways to configure retries:
             // retries for 30 minutes
         }
     }
-```
+    ```
 
 ### Configuring delay
 
-There are two main ways to configure delays between retries:
+There are **two** main ways to configure delays between retries:
 
-1. Sleep a number of seconds between each retry:
+1. Sleep for a duration between each retry:
     ```php
     /**
      * @retryAttempts 3
-     * @retrySleepSeconds 10
+     * @retrySleep 10s
      */
-```
+    ```
 
-1. Sleep a number of seconds which increases exponentially based on the retry attempt:
+1. Sleep for an amount which increases exponentially based on the retry attempt:
     ```php
     /**
      * @retryAttempts 3
-     * @retryBackoff
+     * @retryBackoffExponential
      */
-```
+    ```
 
-**Note:** The defalt to `retryBackoff`  is `exponentialBackoffDelay`, which can be defined
-in your test, or you can provide a custom method for your delay:
+You can also customize your backoff with a function
 
 ```php
 /**
  * @retryAttempts 3
- * @retryBackoff customDelayFunction
+ * @retryDelayFunction customDelayFunction
  */
 ```
+
+**Note:** The defalt to `@retryBackoffExponential` is to start at 1s and
+increase to a maximum of 60s over the course of 10 retries. You can define
+`exponentialBackoffDelay` in your test to customize this behavior.
 
 ### Configuring retry conditions
 
