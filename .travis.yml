@@ -13,8 +13,9 @@ env:
 
 before_install:
 - composer install
-- composer global require friendsofphp/php-cs-fixer
+- composer global require friendsofphp/php-cs-fixer:^2
+- composer global require phpunit/phpunit
 
 script:
   - $COMPOSER_BIN_DIR/php-cs-fixer fix --dry-run --diff .
-  - phpunit
+  - $COMPOSER_BIN_DIR/phpunit -v

@@ -41,12 +41,13 @@ class RetryTraitTest extends TestCase
      */
     public function testRetryDelaySeconds()
     {
+        $currentTimestamp = time();
         if (empty(self::$timestampCalled)) {
-            self::$timestampCalled = time();
+            self::$timestampCalled = $currentTimestamp;
             throw new Exception('Intentional Exception');
         }
 
-        $this->assertGreaterThan(self::$timestampCalled, time());
+        $this->assertGreaterThan(self::$timestampCalled, $currentTimestamp);
         self::$timestampCalled = null;
     }
 
@@ -91,7 +92,7 @@ class RetryTraitTest extends TestCase
         if ($currentTimestamp < self::$timestampCalled + 3) {
             throw new Exception('Intentional Exception');
         }
-
+        $this->assertGreaterThan(self::$timestampCalled, $currentTimestamp);
         self::$timestampCalled = null;
     }
 
