@@ -3,11 +3,6 @@
 namespace PHPUnitRetry;
 
 use LogicException;
-use PHPUnit\Framework\IncompleteTestError;
-use PHPUnit\Framework\SkippedTestError;
-use Throwable;
-use Exception;
-use Error;
 
 /**
  * Trait for validating @retry annotations.
@@ -22,21 +17,20 @@ trait RetryAnnotationTrait
         $annotations = $this->getAnnotations();
         $retries = 1;
 
-        if (isset($annotations['class']['retryAttempts'][0])) {
-            $retries = $annotations['class']['retryAttempts'][0];
-        }
         if (isset($annotations['method']['retryAttempts'][0])) {
             $retries = $annotations['method']['retryAttempts'][0];
+        } elseif (isset($annotations['class']['retryAttempts'][0])) {
+            $retries = $annotations['class']['retryAttempts'][0];
         }
 
-        return $this->validateRetries($retries);
+        return $this->validateRetryAttemptsAnnotation($retries);
     }
 
     /**
      * @return int
      * @throws LogicException
      */
-    private function validateRetries($retries)
+    private function validateRetryAttemptsAnnotation($retries)
     {
         if ('' === $retries) {
             throw new LogicException(
@@ -68,52 +62,89 @@ trait RetryAnnotationTrait
     /**
      * @return int
      */
-    private function getRetrySleepSecondsAnnotation()
+    private function getRetryDelaySecondsAnnotation()
     {
         $annotations = $this->getAnnotations();
-        $retrySleepSeconds = 0;
+        $retryDelaySeconds = 0;
 
-        if (isset($annotations['class']['retrySleepSeconds'][0])) {
-            $retrySleepSeconds = $annotations['class']['retrySleepSeconds'][0];
-        }
-        if (isset($annotations['method']['retrySleepSeconds'][0])) {
-            $retrySleepSeconds = $annotations['method']['retrySleepSeconds'][0];
+        if (isset($annotations['method']['retryDelaySeconds'][0])) {
+            $retryDelaySeconds = $annotations['method']['retryDelaySeconds'][0];
+        } elseif (isset($annotations['class']['retryDelaySeconds'][0])) {
+            $retryDelaySeconds = $annotations['class']['retryDelaySeconds'][0];
         }
 
-        return $this->validateSleepSeconds($retrySleepSeconds);
+        return $this->validateRetryDelaySecondsAnnotation($retryDelaySeconds);
     }
 
     /**
      * @return int
      * @throws LogicException
      */
-    private function validateSleepSeconds($retrySleepSeconds)
+    private function validateRetryDelaySecondsAnnotation($retryDelaySeconds)
     {
-        if ('' === $retrySleepSeconds) {
+        if ('' === $retryDelaySeconds) {
             throw new LogicException(
-                'The @retrySleepSeconds annotation requires a positive integer as an argument'
+                'The @retryDelaySeconds annotation requires a positive integer as an argument'
             );
         }
-        if (false === is_numeric($retrySleepSeconds)) {
+        if (false === is_numeric($retryDelaySeconds)) {
             throw new LogicException(sprintf(
-                'The @retrySleepSeconds annotation must be an integer but got "%s"',
-                var_export($retrySleepSeconds, true)
+                'The @retryDelaySeconds annotation must be an integer but got "%s"',
+                var_export($retryDelaySeconds, true)
             ));
         }
-        if (floatval($retrySleepSeconds) != intval($retrySleepSeconds)) {
+        if (floatval($retryDelaySeconds) != intval($retryDelaySeconds)) {
             throw new LogicException(sprintf(
-                'The @retrySleepSeconds annotation must be an integer but got "%s"',
-                floatval($retrySleepSeconds)
+                'The @retryDelaySeconds annotation must be an integer but got "%s"',
+                floatval($retryDelaySeconds)
             ));
         }
-        $retrySleepSeconds = (int) $retrySleepSeconds;
-        if ($retrySleepSeconds < 0) {
+        $retryDelaySeconds = (int) $retryDelaySeconds;
+        if ($retryDelaySeconds < 0) {
             throw new LogicException(sprintf(
-                'The @retrySleepSeconds annotation must be 0 or greater but got "%s".',
-                $retrySleepSeconds
+                'The @retryDelaySeconds annotation must be 0 or greater but got "%s".',
+                $retryDelaySeconds
             ));
         }
-        return $retrySleepSeconds;
+        return $retryDelaySeconds;
+    }
+
+    /**
+     * @return int
+     */
+    private function getRetryDelayMethodAnnotation()
+    {
+        $annotations = $this->getAnnotations();
+
+        if (isset($annotations['method']['retryDelayMethod'][0])) {
+            $retryDelayMethod = $annotations['method']['retryDelayMethod'][0];
+        } elseif (isset($annotations['class']['retryDelayMethod'][0])) {
+            $retryDelayMethod = $annotations['class']['retryDelayMethod'][0];
+        } else {
+            return;
+        }
+
+        return $this->validateRetryDelayMethodAnnotation($retryDelayMethod);
+    }
+
+    /**
+     * @return string
+     * @throws LogicException
+     */
+    private function validateRetryDelayMethodAnnotation($retryDelayMethod)
+    {
+        if ('' === $retryDelayMethod) {
+            throw new LogicException(
+                'The @retryDelayMethod annotation requires a callable as an argument'
+            );
+        }
+        if (false === is_callable([$this, $retryDelayMethod])) {
+            throw new LogicException(sprintf(
+                'The @retryDelayMethod annotation must be a method in your test class but got "%s"',
+                $retryDelayMethod
+            ));
+        }
+        return $retryDelayMethod;
     }
 
     /**
@@ -128,7 +159,7 @@ trait RetryAnnotationTrait
             $retryException = $annotations['method']['retryException'][0];
             if ('' === $retryException) {
                 throw new LogicException(
-                    'The @retrySleepSeconds annotation requires a positive integer as an argument'
+                    'The @retryDelaySeconds annotation requires a positive integer as an argument'
                 );
             }
             return $retryException;

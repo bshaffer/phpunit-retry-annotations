@@ -27,7 +27,7 @@ trait RetryTrait
                 // Log retry
                 $this->logRetryAttempt($i + 1, $retries);
                 // Execute delay function
-                $this->retryDelayFunction();
+                $this->executeRetryDelayFunction($i + 1);
             }
             try {
                 return parent::runBare();
@@ -50,10 +50,19 @@ trait RetryTrait
         printf('[RETRY] Attempt %s of %s' . PHP_EOL, $attempt, $maxAttempts);
     }
 
-    private function retryDelayFunction()
+    private function executeRetryDelayFunction($attempt)
     {
-        if ($sleepSeconds = $this->getRetrySleepSecondsAnnotation()) {
-            sleep($sleepSeconds);
+        $delaySeconds = $this->getRetryDelaySecondsAnnotation();
+        $delayMethod = $this->getRetryDelayMethodAnnotation();
+
+        if ($delaySeconds && $delayMethod) {
+            throw new LogicException('Cannot set both @retryDelaySeconds and @retryDelayMethod');
+        }
+
+        if ($delaySeconds) {
+            sleep($delaySeconds);
+        } elseif ($delayMethod) {
+            call_user_func([$this, $delayMethod], $attempt);
         }
     }
 }

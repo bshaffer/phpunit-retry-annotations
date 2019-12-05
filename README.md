@@ -66,34 +66,48 @@ There are **two** main ways to configure retries:
 
 There are **two** main ways to configure delays between retries:
 
-1. Sleep for a duration between each retry:
+1. Delay for a duration between each retry:
     ```php
     /**
      * @retryAttempts 3
-     * @retrySleep 10s
+     * @retryDelaySeconds 10s
      */
     ```
 
-1. Sleep for an amount which increases exponentially based on the retry attempt:
+1. Delay for an amount which increases exponentially based on the retry attempt:
     ```php
     /**
      * @retryAttempts 3
-     * @retryBackoffExponential
+     * @retryDelayMethod exponentialBackofff
      */
     ```
 
-You can also customize your backoff with a function
+    You can also customize your backoff by defining a delay method:
 
-```php
-/**
- * @retryAttempts 3
- * @retryDelayFunction customDelayFunction
- */
-```
+    ```php
+    /**
+     * @retryAttempts 3
+     * @retryDelayMethod customDelay
+     */
+    public function testWithCustomDelay()
+    {
+        // retries using the method `customDelay`.
+    }
 
-**Note:** The defalt to `@retryBackoffExponential` is to start at 1s and
-increase to a maximum of 60s over the course of 10 retries. You can define
-`exponentialBackoffDelay` in your test to customize this behavior.
+    /**
+     * A custom delay method.
+     *
+     * @param int $attempt The current test attempt
+     */
+    private function customDelay($attempt)
+    {
+        // Doubles the sleep each attempt, but not longer than 10 seconds.
+        sleep(min($attempt * 2, 10));
+    }
+    ```
+
+**Note:** The behavior of the `exponentialBackoff` method is to start at 1
+second and increase to a maximum of 60 seconds over the course of 10 retries.
 
 ### Configuring retry conditions
 

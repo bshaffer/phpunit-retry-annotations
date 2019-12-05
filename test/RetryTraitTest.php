@@ -35,47 +35,47 @@ class RetryTraitTest extends TestCase
      * @expectedException LogicException
      * @expectedExceptionMessage The @retryAttempts annotation requires a positive integer as an argument
      */
-    public function testNoArgumentToRetryAnnotation()
+    public function testNoArgumentToRetryAttemptsAnnotation()
     {
-        $this->validateRetries('');
+        $this->validateRetryAttemptsAnnotation('');
     }
 
     /**
      * @expectedException LogicException
      * @expectedExceptionMessage The @retryAttempts annotation must be an integer but got "'foo'"
      */
-    public function testInvalidStringArgumentTypeToRetryAnnotation()
+    public function testInvalidStringArgumentTypeToRetryAttemptsAnnotation()
     {
-        $this->validateRetries('foo');
+        $this->validateRetryAttemptsAnnotation('foo');
     }
 
     /**
      * @expectedException LogicException
      * @expectedExceptionMessage The @retryAttempts annotation must be an integer but got "1.2"
      */
-    public function testInvalidFloatArgumentTypeToRetryAnnotation()
+    public function testInvalidFloatArgumentTypeToRetryAttemptsAnnotation()
     {
-        $this->validateRetries('1.2');
+        $this->validateRetryAttemptsAnnotation('1.2');
     }
 
     /**
      * @expectedException LogicException
      * @expectedExceptionMessage The @retryAttempts annotation must be greater than 0 but got "0"
      */
-    public function testNonPositiveIntegerToRetryAnnotation()
+    public function testNonPositiveIntegerToRetryAttemptsAnnotation()
     {
-        $this->validateRetries(0);
+        $this->validateRetryAttemptsAnnotation(0);
     }
 
-    public function testValidRetryAnnotations()
+    public function testValidRetryAttemptsAnnotations()
     {
-        $this->assertEquals(1, $this->validateRetries(1));
-        $this->assertEquals(1, $this->validateRetries('1'));
-        $this->assertEquals(1, $this->validateRetries(1.0));
-        $this->assertEquals(1, $this->validateRetries('1.0'));
+        $this->assertEquals(1, $this->validateRetryAttemptsAnnotation(1));
+        $this->assertEquals(1, $this->validateRetryAttemptsAnnotation('1'));
+        $this->assertEquals(1, $this->validateRetryAttemptsAnnotation(1.0));
+        $this->assertEquals(1, $this->validateRetryAttemptsAnnotation('1.0'));
     }
 
-    public function testClassRetrySleepSeconds()
+    public function testClassRetryDelaySeconds()
     {
         $this->assertEquals(2, $this->getRetryAttemptsAnnotation());
     }
@@ -83,55 +83,55 @@ class RetryTraitTest extends TestCase
     /**
      * @retryAttempts 3
      */
-    public function testMethodRetrySleepSeconds()
+    public function testMethodRetryDelaySeconds()
     {
         $this->assertEquals(3, $this->getRetryAttemptsAnnotation());
     }
 
     /**
      * @expectedException LogicException
-     * @expectedExceptionMessage The @retrySleepSeconds annotation requires a positive integer as an argument
+     * @expectedExceptionMessage The @retryDelaySeconds annotation requires a positive integer as an argument
      */
-    public function testNoArgumentToRetrySleepSecondsAnnotation()
+    public function testNoArgumentToRetryDelaySecondsAnnotation()
     {
-        $this->validateSleepSeconds('');
+        $this->validateRetryDelaySecondsAnnotation('');
     }
 
     /**
      * @expectedException LogicException
-     * @expectedExceptionMessage The @retrySleepSeconds annotation must be an integer but got "'foo'"
+     * @expectedExceptionMessage The @retryDelaySeconds annotation must be an integer but got "'foo'"
      */
-    public function testInvalidStringArgumentTypeToRetrySleepSecondsAnnotation()
+    public function testInvalidStringArgumentTypeToRetryDelaySecondsAnnotation()
     {
-        $this->validateSleepSeconds('foo');
+        $this->validateRetryDelaySecondsAnnotation('foo');
     }
 
     /**
      * @expectedException LogicException
-     * @expectedExceptionMessage The @retrySleepSeconds annotation must be an integer but got "1.2"
+     * @expectedExceptionMessage The @retryDelaySeconds annotation must be an integer but got "1.2"
      */
-    public function testInvalidFloatArgumentTypeToRetrySleepSecondsAnnotation()
+    public function testInvalidFloatArgumentTypeToRetryDelaySecondsAnnotation()
     {
-        $this->validateSleepSeconds('1.2');
+        $this->validateRetryDelaySecondsAnnotation('1.2');
     }
 
     /**
      * @expectedException LogicException
-     * @expectedExceptionMessage The @retrySleepSeconds annotation must be 0 or greater but got "-1"
+     * @expectedExceptionMessage The @retryDelaySeconds annotation must be 0 or greater but got "-1"
      */
-    public function testNonPositiveIntegerToRetrySleepSecondsAnnotation()
+    public function testNonPositiveIntegerToRetryDelaySecondsAnnotation()
     {
-        $this->validateSleepSeconds(-1);
+        $this->validateRetryDelaySecondsAnnotation(-1);
     }
 
-    public function testValidRetrySleepSecondsAnnotations()
+    public function testValidRetryDelaySecondsAnnotations()
     {
-        $this->assertEquals(0, $this->validateSleepSeconds(0));
-        $this->assertEquals(0, $this->validateSleepSeconds('0'));
-        $this->assertEquals(1, $this->validateSleepSeconds(1));
-        $this->assertEquals(1, $this->validateSleepSeconds('1'));
-        $this->assertEquals(1, $this->validateSleepSeconds(1.0));
-        $this->assertEquals(1, $this->validateSleepSeconds('1.0'));
+        $this->assertEquals(0, $this->validateRetryDelaySecondsAnnotation(0));
+        $this->assertEquals(0, $this->validateRetryDelaySecondsAnnotation('0'));
+        $this->assertEquals(1, $this->validateRetryDelaySecondsAnnotation(1));
+        $this->assertEquals(1, $this->validateRetryDelaySecondsAnnotation('1'));
+        $this->assertEquals(1, $this->validateRetryDelaySecondsAnnotation(1.0));
+        $this->assertEquals(1, $this->validateRetryDelaySecondsAnnotation('1.0'));
     }
 
     /**
@@ -149,10 +149,10 @@ class RetryTraitTest extends TestCase
 
     /**
      * @retryAttempts 2
-     * @retrySleepSeconds 1
+     * @retryDelaySeconds 1
      * @depends testRetriesOnException
      */
-    public function testRetrySleepSeconds()
+    public function testRetryDelaySeconds()
     {
         if (empty(self::$timeCalled)) {
             self::$timeCalled = time();
