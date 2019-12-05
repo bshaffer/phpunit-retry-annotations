@@ -12,99 +12,99 @@ composer require --dev bshaffer/phpunit-retry-annotations
 
 ### Types of retries
 
-There are **two** main ways to configure retries:
+#### Retry using a specified number of retries
 
-1. Retry using a specified number of retries
-    ```php
-    /**
-     * @retryAttempts 2
-     */
-    class MyTest extends PHPUnit\Framework\TestCase
+```php
+/**
+ * @retryAttempts 2
+ */
+class MyTest extends PHPUnit\Framework\TestCase
+{
+    use PHPUnitRetry\RetryTrait;
+
+    public function testSomethingFlakeyTwice()
     {
-        use Google\Cloud\TestUtils\RetryTrait;
-
-        public function testSomethingFlakeyTwice()
-        {
-            // test something flakey twice
-        }
-
-        /**
-         * @retryAttempts 3
-         */
-        public function testSomethingFlakeyThreeTimes()
-        {
-            // test something flakey three times
-        }
+        // test something flakey twice
     }
-    ```
 
-1. Retry until a specific duration has passed
-    ```php
     /**
-     * @retryFor 90s
+     * @retryAttempts 3
      */
-    class MyTest extends PHPUnit\Framework\TestCase
+    public function testSomethingFlakeyThreeTimes()
     {
-        use Google\Cloud\TestUtils\RetryTrait;
-
-        public function testSomethingFlakeyFor90Seconds()
-        {
-            // retries for 90 seconds
-        }
-
-        /**
-         * @retryFor 30m
-         */
-        public function testSomethingFlakeyFor30Minutes()
-        {
-            // retries for 30 minutes
-        }
+        // test something flakey three times
     }
-    ```
+}
+```
+
+#### Retry until a specific duration has passed
+
+```php
+/**
+ * @retryFor 90s
+ */
+class MyTest extends PHPUnit\Framework\TestCase
+{
+    use PHPUnitRetry\RetryTrait;
+
+    public function testSomethingFlakeyFor90Seconds()
+    {
+        // retries for 90 seconds
+    }
+
+    /**
+     * @retryFor 30m
+     */
+    public function testSomethingFlakeyFor30Minutes()
+    {
+        // retries for 30 minutes
+    }
+}
+```
 
 ### Configuring delay
 
-There are **two** main ways to configure delays between retries:
+#### Delay for a duration between each retry:
 
-1. Delay for a duration between each retry:
-    ```php
-    /**
-     * @retryAttempts 3
-     * @retryDelaySeconds 10s
-     */
-    ```
+```php
+/**
+ * @retryAttempts 3
+ * @retryDelaySeconds 10s
+ */
+```
 
-1. Delay for an amount which increases exponentially based on the retry attempt:
-    ```php
-    /**
-     * @retryAttempts 3
-     * @retryDelayMethod exponentialBackofff
-     */
-    ```
+#### Delay for an amount which increases exponentially based on the retry attempt:
 
-    You can also customize your backoff by defining a delay method:
+```php
+/**
+ * @retryAttempts 3
+ * @retryDelayMethod exponentialBackofff
+ */
+```
 
-    ```php
-    /**
-     * @retryAttempts 3
-     * @retryDelayMethod customDelay
-     */
-    public function testWithCustomDelay()
-    {
-        // retries using the method `customDelay`.
-    }
+You can also customize your backoff by defining a delay method:
 
-    /**
-     * A custom delay method.
-     *
-     * @param int $attempt The current test attempt
-     */
-    private function customDelay($attempt)
-    {
-        // Doubles the sleep each attempt, but not longer than 10 seconds.
-        sleep(min($attempt * 2, 10));
-    }
-    ```
+```php
+/**
+ * @retryAttempts 3
+ * @retryDelayMethod customDelay
+ */
+public function testWithCustomDelay()
+{
+    // retries using the method `customDelay`.
+}
+
+/**
+ * A custom delay method.
+ *
+ * @param int $attempt The current test attempt
+ */
+private function customDelay($attempt)
+{
+    // Doubles the sleep each attempt, but not longer than 10 seconds.
+    sleep(min($attempt * 2, 10));
+}
+```
 
 **Note:** The behavior of the `exponentialBackoff` method is to start at 1
 second and increase to a maximum of 60 seconds over the course of 10 retries.
