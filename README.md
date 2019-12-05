@@ -8,11 +8,9 @@ Traits for retrying test methods and classes in PHPUnit.
 composer require --dev bshaffer/phpunit-retry-annotations
 ```
 
-## Usage
+## Configuring retries
 
-### Types of retries
-
-#### Retry using a specified number of retries
+### Retry using a specified number of retries
 
 ```php
 /**
@@ -24,7 +22,7 @@ class MyTest extends PHPUnit\Framework\TestCase
 
     public function testSomethingFlakeyTwice()
     {
-        // test something flakey twice
+        // Retry a flakey test up to two times
     }
 
     /**
@@ -32,16 +30,19 @@ class MyTest extends PHPUnit\Framework\TestCase
      */
     public function testSomethingFlakeyThreeTimes()
     {
-        // test something flakey three times
+        // Retry a flakey test up to three times
     }
 }
 ```
 
-#### Retry until a specific duration has passed
+**NOTE:** "Attempts" represents the number of times a test is retried.
+Providing "@retryAttempts" a value of 0 has no effect, and would not retry.
+
+### Retry until a specific duration has passed
 
 ```php
 /**
- * @retryFor 90s
+ * @retryForSeconds 90
  */
 class MyTest extends PHPUnit\Framework\TestCase
 {
@@ -53,7 +54,7 @@ class MyTest extends PHPUnit\Framework\TestCase
     }
 
     /**
-     * @retryFor 30m
+     * @retryForSeconds 1800
      */
     public function testSomethingFlakeyFor30Minutes()
     {
@@ -62,54 +63,10 @@ class MyTest extends PHPUnit\Framework\TestCase
 }
 ```
 
-### Configuring delay
+## Configuring retry conditions
 
-#### Delay for a duration between each retry:
 
-```php
-/**
- * @retryAttempts 3
- * @retryDelaySeconds 10s
- */
-```
-
-#### Delay for an amount which increases exponentially based on the retry attempt:
-
-```php
-/**
- * @retryAttempts 3
- * @retryDelayMethod exponentialBackofff
- */
-```
-
-You can also customize your backoff by defining a delay method:
-
-```php
-/**
- * @retryAttempts 3
- * @retryDelayMethod customDelay
- */
-public function testWithCustomDelay()
-{
-    // retries using the method `customDelay`.
-}
-
-/**
- * A custom delay method.
- *
- * @param int $attempt The current test attempt
- */
-private function customDelay($attempt)
-{
-    // Doubles the sleep each attempt, but not longer than 10 seconds.
-    sleep(min($attempt * 2, 10));
-}
-```
-
-**Note:** The behavior of the `exponentialBackoff` method is to start at 1
-second and increase to a maximum of 60 seconds over the course of 10 retries.
-
-### Configuring retry conditions
+### Retry only for certain exceptions
 
 By default, retrying happens when any exception other than
 `PHPUnit\Framework\IncompleteTestError` and `PHPUnit\Framework\SkippedTestError`
@@ -122,25 +79,143 @@ throw a certain exception.
 ```php
 /**
  * @retryAttempts 3
- * @retryException MyApi\ResourceExhaustedException
+ * @retryIfException MyApi\ResourceExhaustedException
  */
 ```
 
-Or retry for certain exception messages.
+You can retry for multiple exceptions.
 
 ```php
 /**
  * @retryAttempts 3
- * @retryException MyApi\ServiceException
- * @retryExceptionMessage rate limit exceeded
+ * @retryIfException MyApi\RateLimitExceededException
+ * @retryIfException MyApi\ServiceUnavailableException
  */
 ```
 
-Or, if you want to retry for multiple exceptions, define a custom function
+### Retry based on a custom method
+
+For more complex logic surrounding whether you should retry, define a custom
+retry method:
 
 ```php
 /**
  * @retryAttempts 3
- * @retryMethod shouldRetryException
+ * @retryIfMethod isRateLimitExceededException
  */
+public function testWithCustomRetryMethod()
+{
+    // retries only if the method `isRateLimitExceededException` returns true.
+}
+
+/**
+ * @param Exception $e
+ */
+private function isRateLimitExceededException(Exception $e)
+{
+    // Check if HTTP Status code is 429 "Too many requests"
+    return ($e instanceof HttpException && $e->getStatusCode() == 429);
+}
+```
+
+Define arbitrary arguments for your retry method by passing them into the
+annotation:
+
+```php
+/**
+ * @retryAttempts 3
+ * @retryIfMethod exceptionStatusCode 429
+ */
+public function testWithCustomRetryMethod()
+{
+    // retries only if the method `exceptionStatusCode` returns true.
+}
+
+/**
+ * @param Exception $e
+ */
+private function exceptionStatusCode(Exception $e, $statusCode)
+{
+    // Check if HTTP status code is $statusCode
+    return ($e instanceof HttpException && $e->getStatusCode() == $statusCode);
+}
+```
+## Configuring delay
+
+### Delay for a duration between each retry
+
+```php
+/**
+ * @retryAttempts 3
+ * @retryDelaySeconds 10
+ */
+```
+
+### Delay for an amount increasing exponentially based on the retry attempt
+
+```php
+/**
+ * @retryAttempts 3
+ * @retryDelayMethod exponentialBackoff
+ */
+```
+
+The behavior of the `exponentialBackoff` method is to start at 1
+second and increase to a maximum of 60 seconds. The maximum delay can be
+customized by supplying a second argument to the annotation
+
+```php
+/**
+ * This test will delay with exponential backoff, with a maximum delay of 1 hr.
+ *
+ * @retryAttempts 3
+ * @retryDelayMethod exponentialBackoff 3600
+ */
+```
+
+### Define a custom delay method
+
+```php
+/**
+ * @retryAttempts 3
+ * @retryDelayMethod myCustomDelay
+ */
+public function testWithCustomDelay()
+{
+    // retries using the method `myCustomDelay`.
+}
+
+/**
+ * @param int $attempt The current test attempt
+ */
+private function myCustomDelay($attempt)
+{
+    // Doubles the sleep each attempt, but not longer than 10 seconds.
+    sleep(min($attempt * 2, 10));
+}
+```
+
+Define arbitrary arguments for your delay function by passing them into the
+annotation:
+
+```php
+/**
+ * @retryAttempts 3
+ * @retryDelayMethod myCustomDelay 10 60
+ */
+public function testWithCustomDelay()
+{
+    // retries using the method `myCustomDelay`.
+}
+
+/**
+ * @param int $attempt The current test attempt.
+ * @param int $multiplier Rate of exponential backoff delay.
+ * @param int $maxDelay Maximum time to wait regardless of retry attempt.
+ */
+private function myCustomDelay($attempt, $multiplier, $maxDelay)
+{
+    // Increases exponentially
+    sleep(min($attempt * $multiplier, $max));
+}
 ```

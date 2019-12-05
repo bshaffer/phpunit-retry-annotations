@@ -15,7 +15,7 @@ trait RetryAnnotationTrait
     private function getRetryAttemptsAnnotation()
     {
         $annotations = $this->getAnnotations();
-        $retries = 1;
+        $retries = 0;
 
         if (isset($annotations['method']['retryAttempts'][0])) {
             $retries = $annotations['method']['retryAttempts'][0];
@@ -34,7 +34,7 @@ trait RetryAnnotationTrait
     {
         if ('' === $retries) {
             throw new LogicException(
-                'The @retryAttempts annotation requires a positive integer as an argument'
+                'The @retryAttempts annotation requires an integer as an argument'
             );
         }
         if (false === is_numeric($retries)) {
@@ -50,9 +50,9 @@ trait RetryAnnotationTrait
             ));
         }
         $retries = (int) $retries;
-        if ($retries <= 0) {
+        if ($retries < 0) {
             throw new LogicException(sprintf(
-                'The @retryAttempts annotation must be greater than 0 but got "%s".',
+                'The @retryAttempts annotation must be 0 or greater but got "%s".',
                 $retries
             ));
         }
@@ -84,7 +84,7 @@ trait RetryAnnotationTrait
     {
         if ('' === $retryDelaySeconds) {
             throw new LogicException(
-                'The @retryDelaySeconds annotation requires a positive integer as an argument'
+                'The @retryDelaySeconds annotation requires an integer as an argument'
             );
         }
         if (false === is_numeric($retryDelaySeconds)) {
@@ -110,59 +110,177 @@ trait RetryAnnotationTrait
     }
 
     /**
-     * @return int
+     * @return string
      */
     private function getRetryDelayMethodAnnotation()
     {
         $annotations = $this->getAnnotations();
 
         if (isset($annotations['method']['retryDelayMethod'][0])) {
-            $retryDelayMethod = $annotations['method']['retryDelayMethod'][0];
+            $delayAnnotation = $annotations['method']['retryDelayMethod'];
         } elseif (isset($annotations['class']['retryDelayMethod'][0])) {
-            $retryDelayMethod = $annotations['class']['retryDelayMethod'][0];
+            $delayAnnotation = $annotations['class']['retryDelayMethod'];
         } else {
             return;
         }
 
-        return $this->validateRetryDelayMethodAnnotation($retryDelayMethod);
+        $delayAnnotations = explode(' ', $delayAnnotation[0]);
+        $delayMethod = $delayAnnotations[0];
+        $delayMethodArgs = array_slice($delayAnnotations, 1);
+
+        return [
+            $this->validateRetryDelayMethodAnnotation($delayMethod),
+            $delayMethodArgs,
+        ];
     }
 
     /**
      * @return string
      * @throws LogicException
      */
-    private function validateRetryDelayMethodAnnotation($retryDelayMethod)
+    private function validateRetryDelayMethodAnnotation($delayMethod)
     {
-        if ('' === $retryDelayMethod) {
+        if ('' === $delayMethod) {
             throw new LogicException(
                 'The @retryDelayMethod annotation requires a callable as an argument'
             );
         }
-        if (false === is_callable([$this, $retryDelayMethod])) {
+        if (false === is_callable([$this, $delayMethod])) {
             throw new LogicException(sprintf(
                 'The @retryDelayMethod annotation must be a method in your test class but got "%s"',
-                $retryDelayMethod
+                $delayMethod
             ));
         }
-        return $retryDelayMethod;
+        return $delayMethod;
     }
 
     /**
-     * @return string|null
+     * @return int
      */
-    private function getRetryExceptionAnnotation()
+    private function getRetryForSecondsAnnotation()
     {
         $annotations = $this->getAnnotations();
-        $retries = 1;
 
-        if (isset($annotations['method']['retryException'][0])) {
-            $retryException = $annotations['method']['retryException'][0];
-            if ('' === $retryException) {
-                throw new LogicException(
-                    'The @retryDelaySeconds annotation requires a positive integer as an argument'
-                );
-            }
-            return $retryException;
+        if (isset($annotations['method']['retryForSeconds'][0])) {
+            $retryForSeconds = $annotations['method']['retryForSeconds'][0];
+        } elseif (isset($annotations['class']['retryForSeconds'][0])) {
+            $retryForSeconds = $annotations['class']['retryForSeconds'][0];
+        } else {
+            return;
         }
+
+        return $this->validateRetryForSecondsAnnotation($retryForSeconds);
+    }
+
+    /**
+     * @return int
+     * @throws LogicException
+     */
+    private function validateRetryForSecondsAnnotation($retryForSeconds)
+    {
+        if ('' === $retryForSeconds) {
+            throw new LogicException(
+                'The @retryForSeconds annotation requires an integer as an argument'
+            );
+        }
+        if (false === is_numeric($retryForSeconds)) {
+            throw new LogicException(sprintf(
+                'The @retryForSeconds annotation must be an integer but got "%s"',
+                var_export($retryForSeconds, true)
+            ));
+        }
+        if (floatval($retryForSeconds) != intval($retryForSeconds)) {
+            throw new LogicException(sprintf(
+                'The @retryForSeconds annotation must be an integer but got "%s"',
+                floatval($retryForSeconds)
+            ));
+        }
+        $retryForSeconds = (int) $retryForSeconds;
+        if ($retryForSeconds < 0) {
+            throw new LogicException(sprintf(
+                'The @retryForSeconds annotation must be 0 or greater but got "%s".',
+                $retryForSeconds
+            ));
+        }
+        return $retryForSeconds;
+    }
+
+    /**
+     * @return array|null
+     */
+    private function getRetryIfExceptionAnnotations()
+    {
+        $annotations = $this->getAnnotations();
+
+        if (isset($annotations['method']['retryIfException'][0])) {
+            $retryIfExceptions = [];
+            foreach ($annotations['method']['retryIfException'] as $retryIfException) {
+                $retryIfExceptions[] = $this->validateRetryIfExceptionAnnotation($retryIfException);
+            }
+            return $retryIfExceptions;
+        }
+    }
+
+    /**
+     * @return int
+     * @throws LogicException
+     */
+    private function validateRetryIfExceptionAnnotation($retryIfException)
+    {
+        if ('' === $retryIfException) {
+            throw new LogicException(
+                'The @retryIfException annotation requires a class name as an argument'
+            );
+        }
+
+        if (!class_exists($retryIfException)) {
+            throw new LogicException(sprintf(
+                'The @retryIfException annotation must be an instance of Exception but got "%s"',
+                $retryIfException
+            ));
+        }
+
+        return $retryIfException;
+    }
+
+    /**
+     * @return string
+     */
+    private function getRetryIfMethodAnnotation()
+    {
+        $annotations = $this->getAnnotations();
+
+        if (!isset($annotations['method']['retryIfMethod'][0])) {
+            return;
+        }
+
+        $retryIfMethodAnnotation = explode(' ', $annotations['method']['retryIfMethod'][0]);
+        $retryIfMethod = $retryIfMethodAnnotation[0];
+        $retryIfMethodArgs = array_slice($retryIfMethodAnnotation, 1);
+
+        return [
+            $this->validateRetryIfMethodAnnotation($retryIfMethod),
+            $retryIfMethodArgs,
+        ];
+    }
+
+    /**
+     * @return string
+     * @throws LogicException
+     */
+    private function validateRetryIfMethodAnnotation($retryIfMethod)
+    {
+        if ('' === $retryIfMethod) {
+            throw new LogicException(
+                'The @retryIfMethod annotation requires a callable as an argument'
+            );
+        }
+        if (false === is_callable([$this, $retryIfMethod])) {
+            throw new LogicException(sprintf(
+                'The @retryIfMethod annotation must be a method in your test class but got "%s"',
+                $retryIfMethod
+            ));
+        }
+        return $retryIfMethod;
     }
 }
