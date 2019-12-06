@@ -183,7 +183,7 @@ trait RetryAnnotationTrait
         return $retryForSeconds;
     }
 
-    private function getRetryIfExceptionAnnotations(): ?array 
+    private function getRetryIfExceptionAnnotations(): ?array
     {
         $annotations = $this->getAnnotations();
 
