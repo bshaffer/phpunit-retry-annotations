@@ -9,11 +9,12 @@ matrix:
 
 env:
   global:
-    - COMPOSER_BIN_DIR=$(composer global config bin-dir --absolute)
+  - COMPOSER_BIN_DIR=$(composer global config bin-dir --absolute)
 
 before_install:
-  - composer install
-  - composer global require friendsofphp/php-cs-fixer:^2
+- composer install
+- composer global require friendsofphp/php-cs-fixer:^2
+- composer global require phpunit/phpunit
 
 script:
   - $COMPOSER_BIN_DIR/php-cs-fixer fix --dry-run --diff .
