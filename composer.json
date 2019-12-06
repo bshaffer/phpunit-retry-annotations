@@ -19,5 +19,13 @@
         "psr-4": {
             "PHPUnitRetry\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PHPUnitRetry\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0"
     }
 }
