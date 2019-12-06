@@ -132,7 +132,7 @@ trait RetryAnnotationTrait
         }
         if (false === is_callable([$this, $delayMethod])) {
             throw new InvalidArgumentException(sprintf(
-                'The @retryDelayMethod annotation must be a method in your tests class but got "%s"',
+                'The @retryDelayMethod annotation must be a method in your test class but got "%s"',
                 $delayMethod
             ));
         }
@@ -244,7 +244,7 @@ trait RetryAnnotationTrait
         }
         if (false === is_callable([$this, $retryIfMethod])) {
             throw new InvalidArgumentException(sprintf(
-                'The @retryIfMethod annotation must be a method in your tests class but got "%s"',
+                'The @retryIfMethod annotation must be a method in your test class but got "%s"',
                 $retryIfMethod
             ));
         }
