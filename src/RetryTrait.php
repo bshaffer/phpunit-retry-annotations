@@ -20,7 +20,10 @@ trait RetryTrait
 
     private static $timeOfFirstRetry;
 
-    public function runBare() : void
+    /**
+     * Main test loop to implement retry annotations.
+     */
+    public function runBare(): void
     {
         $retryAttempt = 0;
         self::$timeOfFirstRetry = null;
@@ -76,6 +79,8 @@ trait RetryTrait
                 $secondsRemaining,
                 $secondsRemaining === 1 ? 'second' : 'seconds'
             );
+        } else {
+            return false;
         }
 
         // Execute delay function
@@ -117,5 +122,35 @@ trait RetryTrait
         }
 
         return null;
+    }
+
+    /**
+     * A delay function implementing an exponential backoff. Use it in your
+     * tests like this:
+     *
+     * /**
+     *  * This test will delay with exponential backoff
+     *  *
+     *  * @retryAttempts 3
+     *  * @retryDelayMethod exponentialBackoff
+     *  * ...
+     *
+     * It is also possible to pass an argument to extend the maximum delay
+     * seconds, which defaults to 60 seconds:
+     *
+     * /**
+     *  * This test will delay with exponential backoff, with a maximum delay of 1 hr.
+     *  *
+     *  * @retryAttempts 30
+     *  * @retryDelayMethod exponentialBackoff 3600
+     *  * ...
+     */
+    private function exponentialBackoff($retryAttempt, $maxDelaySeconds = 60): void
+    {
+        $sleep = min(
+            mt_rand(0, 1000000) + (pow(2, $retryAttempt) * 1000000),
+            $maxDelaySeconds * 1000000
+        );
+        usleep($sleep);
     }
 }
