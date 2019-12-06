@@ -22,6 +22,11 @@ class RetryTraitTest extends TestCase
     private static $customDelayMethodCalled = false;
     private static $customRetryIfMethodCalled = false;
 
+    public function testNoRetryAnnotationsDoesNotRetry(): void
+    {
+        $this->assertFalse($this->checkShouldRetryAgain(1));
+    }
+
     /**
      * @retryAttempts 3
      */
@@ -51,6 +56,34 @@ class RetryTraitTest extends TestCase
 
         $this->assertGreaterThan(self::$timestampCalled, $currentTimestamp);
         self::$timestampCalled = null;
+    }
+
+    public function testExponentialBackoff(): void
+    {
+        $retryAttempt = 0;
+        $leeway = .01;
+        $start1 = microtime(true);
+        $this->exponentialBackoff($retryAttempt);
+        $end1 = microtime(true);
+        $this->assertGreaterThan($start1, $end1);
+        $this->assertLessThan(2 + $leeway, $end1 - $start1);
+
+        $retryAttempt++;
+        $start2 = microtime(true);
+        $this->exponentialBackoff($retryAttempt);
+        $end2 = microtime(true);
+        $this->assertLessThan(3 + $leeway, $end2 - $start2);
+
+        // Assert higher retryAttempt resulted in a longer delay
+        $this->assertGreaterThan($end1 - $start1, $end2 - $start2);
+
+        // Assert $maxDelaySeconds applies regardless of $retryAttempt
+        $retryAttempt = 100;
+        $maxDelaySeconds = 1;
+        $start3 = microtime(true);
+        $this->exponentialBackoff($retryAttempt, $maxDelaySeconds);
+        $end3 = microtime(true);
+        $this->assertLessThan(1 + $leeway, $end3 - $start3);
     }
 
     /**

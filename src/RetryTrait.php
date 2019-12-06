@@ -20,7 +20,7 @@ trait RetryTrait
 
     private static $timeOfFirstRetry;
 
-    public function runBare() : void
+    public function runBare(): void
     {
         $retryAttempt = 0;
         self::$timeOfFirstRetry = null;
@@ -76,6 +76,8 @@ trait RetryTrait
                 $secondsRemaining,
                 $secondsRemaining === 1 ? 'second' : 'seconds'
             );
+        } else {
+            return false;
         }
 
         // Execute delay function
@@ -117,5 +119,14 @@ trait RetryTrait
         }
 
         return null;
+    }
+
+    private function exponentialBackoff($retryAttempt, $maxDelaySeconds = 60): void
+    {
+        $sleep = min(
+            mt_rand(0, 1000000) + (pow(2, $retryAttempt) * 1000000),
+            $maxDelaySeconds * 1000000
+        );
+        usleep($sleep);
     }
 }

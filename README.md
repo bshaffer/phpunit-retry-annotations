@@ -89,7 +89,7 @@ You can retry for multiple exceptions.
 /**
  * @retryAttempts 3
  * @retryIfException MyApi\RateLimitExceededException
- * @retryIfException MyApi\ServiceUnavailableException
+ * @retryIfException ServiceUnavailableException
  */
 ```
 
@@ -168,7 +168,7 @@ customized by supplying a second argument to the annotation
 /**
  * This test will delay with exponential backoff, with a maximum delay of 1 hr.
  *
- * @retryAttempts 3
+ * @retryAttempts 30
  * @retryDelayMethod exponentialBackoff 3600
  */
 ```

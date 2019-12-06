@@ -32,47 +32,39 @@ class RetryAnnotationTraitTest extends TestCase
 
     /**
      * @retryAttempts
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryAttempts annotation requires an integer as an argument
      */
     public function testNoArgumentToRetryAttemptsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryAttempts annotation requires an integer as an argument');
         $this->getRetryAttemptsAnnotation();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryAttempts annotation requires an integer as an argument
-     */
     public function testEmptyStringToRetryAttemptsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryAttempts annotation requires an integer as an argument');
         $this->parseRetryAttemptsAnnotation('');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryAttempts annotation must be an integer but got "'foo'"
-     */
     public function testInvalidStringArgumentTypeToRetryAttemptsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryAttempts annotation must be an integer but got "\'foo\'"');
         $this->parseRetryAttemptsAnnotation('foo');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryAttempts annotation must be an integer but got "1.2"
-     */
     public function testInvalidFloatArgumentTypeToRetryAttemptsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryAttempts annotation must be an integer but got "1.2"');
         $this->parseRetryAttemptsAnnotation('1.2');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryAttempts annotation must be 0 or greater but got "-1"
-     */
     public function testNonPositiveIntegerToRetryAttemptsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryAttempts annotation must be 0 or greater but got "-1"');
         $this->parseRetryAttemptsAnnotation(-1);
     }
 
@@ -98,47 +90,39 @@ class RetryAnnotationTraitTest extends TestCase
 
     /**
      * @retryDelaySeconds
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryDelaySeconds annotation requires an integer as an argument
      */
     public function testNoArgumentToRetryDelaySecondsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryDelaySeconds annotation requires an integer as an argument');
         $this->getRetryDelaySecondsAnnotation();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryDelaySeconds annotation requires an integer as an argument
-     */
     public function testEmptyStringToRetryDelaySecondsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryDelaySeconds annotation requires an integer as an argument');
         $this->parseRetryDelaySecondsAnnotation('');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryDelaySeconds annotation must be an integer but got "'foo'"
-     */
     public function testInvalidStringArgumentTypeToRetryDelaySecondsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryDelaySeconds annotation must be an integer but got "\'foo\'"');
         $this->parseRetryDelaySecondsAnnotation('foo');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryDelaySeconds annotation must be an integer but got "1.2"
-     */
     public function testInvalidFloatArgumentTypeToRetryDelaySecondsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryDelaySeconds annotation must be an integer but got "1.2"');
         $this->parseRetryDelaySecondsAnnotation('1.2');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryDelaySeconds annotation must be 0 or greater but got "-1"
-     */
     public function testNonPositiveIntegerToRetryDelaySecondsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryDelaySeconds annotation must be 0 or greater but got "-1"');
         $this->parseRetryDelaySecondsAnnotation(-1);
     }
 
@@ -181,29 +165,25 @@ class RetryAnnotationTraitTest extends TestCase
 
     /**
      * @retryDelayMethod
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryDelayMethod annotation requires a callable as an argument
      */
     public function testNoArgumentToRetryDelayMethodAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryDelayMethod annotation requires a callable as an argument');
         $this->getRetryDelayMethodAnnotation();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryDelayMethod annotation requires a callable as an argument
-     */
     public function testEmptyStringToRetryDelayMethodAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryDelayMethod annotation requires a callable as an argument');
         $this->parseRetryDelayMethodAnnotation('');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryDelayMethod annotation must be a method in your test class but got "nonexistantDelayMethod"
-     */
     public function testInvalidCallableArgumentTypeToRetryDelayMethodAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryDelayMethod annotation must be a method in your test class but got "nonexistantDelayMethod"');
         $this->parseRetryDelayMethodAnnotation('nonexistantDelayMethod');
     }
 
@@ -222,47 +202,39 @@ class RetryAnnotationTraitTest extends TestCase
 
     /**
      * @retryForSeconds
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryForSeconds annotation requires an integer as an argument
      */
     public function testNoArgumentToRetryForSecondsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryForSeconds annotation requires an integer as an argument');
         $this->getRetryForSecondsAnnotation();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryForSeconds annotation requires an integer as an argument
-     */
     public function testEmptyStringToRetryForSecondsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryForSeconds annotation requires an integer as an argument');
         $this->parseRetryForSecondsAnnotation('');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryForSeconds annotation must be an integer but got "'foo'"
-     */
     public function testInvalidStringArgumentTypeToRetryForSecondsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryForSeconds annotation must be an integer but got "\'foo\'"');
         $this->parseRetryForSecondsAnnotation('foo');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryForSeconds annotation must be an integer but got "1.2"
-     */
     public function testInvalidFloatArgumentTypeToRetryForSecondsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryForSeconds annotation must be an integer but got "1.2"');
         $this->parseRetryForSecondsAnnotation('1.2');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryForSeconds annotation must be 0 or greater but got "-1"
-     */
     public function testNonPositiveIntegerToRetryForSecondsAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryForSeconds annotation must be 0 or greater but got "-1"');
         $this->parseRetryForSecondsAnnotation(-1);
     }
 
@@ -300,29 +272,25 @@ class RetryAnnotationTraitTest extends TestCase
 
     /**
      * @retryIfMethod
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryIfMethod annotation requires a callable as an argument
      */
     public function testNoArgumentToRetryIfMethodAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryIfMethod annotation requires a callable as an argument');
         $this->getRetryIfMethodAnnotation();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryIfMethod annotation requires a callable as an argument
-     */
     public function testEmptyStringToRetryIfMethodAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryIfMethod annotation requires a callable as an argument');
         $this->validateRetryIfMethodAnnotation('');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryIfMethod annotation must be a method in your test class but got "nonexistantIfMethod"
-     */
     public function testInvalidCallableArgumentTypeToRetryIfMethodAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryIfMethod annotation must be a method in your test class but got "nonexistantIfMethod"');
         $this->validateRetryIfMethodAnnotation('nonexistantIfMethod');
     }
 
@@ -351,21 +319,21 @@ class RetryAnnotationTraitTest extends TestCase
 
     /**
      * @retryIfException
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryIfException annotation requires a class name as an argument
      */
     public function testNoArgumentToRetryIfExceptionAnnotation(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryIfException annotation requires a class name as an argument');
         $this->getRetryIfExceptionAnnotations();
     }
 
     /**
      * @retryIfException ThisClassDoesNotExist
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryIfException annotation must be an instance of Exception but got "ThisClassDoesNotExist"
      */
     public function testRetryIfExceptionWithInvalidClassname(): void
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('The @retryIfException annotation must be an instance of Exception but got "ThisClassDoesNotExist"');
         $this->getRetryIfExceptionAnnotations();
     }
 
