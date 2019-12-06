@@ -5,6 +5,11 @@ namespace PHPUnitRetry;
 use PHPUnit\Framework\IncompleteTestError;
 use PHPUnit\Framework\SkippedTestError;
 use Exception;
+use function array_unshift;
+use function call_user_func_array;
+use function printf;
+use function sleep;
+use function time;
 
 /**
  * Trait for adding @retry annotations to retry flakey tests.
@@ -39,11 +44,7 @@ trait RetryTrait
         throw $e;
     }
 
-    /**
-     * @param int $attemept
-     * @return bool
-     */
-    private function checkShouldRetryAgain($retryAttempt)
+    private function checkShouldRetryAgain(int $retryAttempt): bool
     {
         if ($retryAttempts = $this->getRetryAttemptsAnnotation()) {
             // Maximum retry attempts exceeded
@@ -58,7 +59,7 @@ trait RetryTrait
                 $retryAttempts
             );
         } elseif ($retryFor = $this->getRetryForSecondsAnnotation()) {
-            if (is_null(self::$timeOfFirstRetry)) {
+            if (self::$timeOfFirstRetry === null) {
                 self::$timeOfFirstRetry = time();
             }
 
@@ -73,7 +74,7 @@ trait RetryTrait
                 '[RETRY] Retrying %s (%s %s remaining)' . PHP_EOL,
                 $retryAttempt,
                 $secondsRemaining,
-                $secondsRemaining == 1 ? 'second' : 'seconds'
+                $secondsRemaining === 1 ? 'second' : 'seconds'
             );
         }
 
@@ -83,11 +84,7 @@ trait RetryTrait
         return true;
     }
 
-    /**
-     * @param int $attemept
-     * @return bool
-     */
-    private function checkShouldRetryForException(Exception $e)
+    private function checkShouldRetryForException(Exception $e): bool
     {
         if ($retryIfExceptions = $this->getRetryIfExceptionAnnotations()) {
             foreach ($retryIfExceptions as $retryIfException) {
@@ -96,7 +93,9 @@ trait RetryTrait
                 }
             }
             return false;
-        } elseif ($retryIfMethodAnnotation = $this->getRetryIfMethodAnnotation()) {
+        }
+
+        if ($retryIfMethodAnnotation = $this->getRetryIfMethodAnnotation()) {
             [$retryIfMethod, $retryIfMethodArgs] = $retryIfMethodAnnotation;
 
             array_unshift($retryIfMethodArgs, $e);
@@ -107,7 +106,7 @@ trait RetryTrait
         return true;
     }
 
-    private function executeRetryDelayFunction($retryAttempt)
+    private function executeRetryDelayFunction(int $retryAttempt): ?int
     {
         if ($delaySeconds = $this->getRetryDelaySecondsAnnotation()) {
             sleep($delaySeconds);
@@ -116,14 +115,7 @@ trait RetryTrait
             array_unshift($delayMethodArgs, $retryAttempt);
             call_user_func_array([$this, $delayMethod], $delayMethodArgs);
         }
-    }
 
-    private function exponentialBackoff($retryAttempt, $maxDelaySeconds = 60)
-    {
-        $sleep = min(
-            mt_rand(0, 1000000) + (pow(2, $retryAttempt) * 1000000),
-            $maxDelaySeconds * 1000000
-        );
-        usleep($sleep);
+        return null;
     }
 }
