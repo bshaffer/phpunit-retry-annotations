@@ -200,7 +200,7 @@ class RetryAnnotationTraitTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryDelayMethod annotation must be a method in your tests class but got "nonexistantDelayMethod"
+     * @expectedExceptionMessage The @retryDelayMethod annotation must be a method in your test class but got "nonexistantDelayMethod"
      */
     public function testInvalidCallableArgumentTypeToRetryDelayMethodAnnotation(): void
     {
@@ -319,7 +319,7 @@ class RetryAnnotationTraitTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The @retryIfMethod annotation must be a method in your tests class but got "nonexistantIfMethod"
+     * @expectedExceptionMessage The @retryIfMethod annotation must be a method in your test class but got "nonexistantIfMethod"
      */
     public function testInvalidCallableArgumentTypeToRetryIfMethodAnnotation(): void
     {
