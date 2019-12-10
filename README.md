@@ -166,10 +166,10 @@ customized by supplying a second argument to the annotation
 
 ```php
 /**
- * This test will delay with exponential backoff, with a maximum delay of 1 hr.
+ * This test will delay with exponential backoff, with a maximum delay of 10 minutes.
  *
  * @retryAttempts 30
- * @retryDelayMethod exponentialBackoff 3600
+ * @retryDelayMethod exponentialBackoff 600
  */
 ```
 
