@@ -172,6 +172,30 @@ class RetryTraitTest extends TestCase
     }
 
     /**
+     * @retryAttempts 1
+     * @retryInSeparateProcess
+     * @runInSeparateProcess
+     */
+    public function testRunInSeparateProcess(): void
+    {
+        $constantName = 'TEST_CONSTANT';
+        $tmpFile = sprintf('/%s/run_in_separate_process', sys_get_temp_dir());
+
+        // First run
+        if (!file_exists($tmpFile)) {
+            file_put_contents($tmpFile, '1');
+            define($constantName, 'Testing this is not defined');
+            throw new Exception('Intentional Exception');
+        }
+        // $this->fail('Foo');
+        // Second run
+        unlink($tmpFile);
+        $this->fail('Foo');
+        $this->assertTrue(true);
+        // $this->assertFalse(defined($constantName));\
+    }
+
+    /**
      * @var int $attempt
      */
     private function customDelayMethod($attempt): void

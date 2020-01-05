@@ -3,6 +3,8 @@
 namespace PHPUnitRetry;
 
 use InvalidArgumentException;
+use LogicException;
+use PHPUnit\Util\Test;
 use function array_slice;
 use function explode;
 use function is_callable;
@@ -195,7 +197,7 @@ trait RetryAnnotationTrait
             }
             return $retryIfExceptions;
         }
-        
+
         return null;
     }
 
@@ -228,7 +230,7 @@ trait RetryAnnotationTrait
         $retryIfMethodArgs = array_slice($retryIfMethodAnnotation, 1);
 
         $this->validateRetryIfMethodAnnotation($retryIfMethod);
-        
+
         return [
             $retryIfMethod,
             $retryIfMethodArgs,
@@ -248,5 +250,59 @@ trait RetryAnnotationTrait
                 $retryIfMethod
             ));
         }
+    }
+
+    private function retryInSeparateProcess(): bool
+    {
+        $annotations = $this->getAnnotations();
+
+        if (!isset($annotations['method']['retryInSeparateProcess'][0])) {
+            return false;
+        }
+
+        if ('' !== $annotations['method']['retryInSeparateProcess'][0]) {
+            throw new InvalidArgumentException(
+                'The @retryInSeparateProcess annotation does not take an argument'
+            );
+        }
+
+        $className = get_class($this);
+        $name = $this->getName();
+
+        $preserveGlobalState = Test::getPreserveGlobalStateSettings(
+            $className,
+            $name
+        );
+
+        $runTestInSeparateProcess = Test::getProcessIsolationSettings(
+            $className,
+            $name
+        );
+
+        $runClassInSeparateProcess = Test::getClassProcessIsolationSettings(
+            $className,
+            $name
+        );
+
+        if (!($runTestInSeparateProcess || $runClassInSeparateProcess)) {
+            throw new LogicException(
+                'The test must be configured to run in a separate process when @retryInSeparateProcess is set'
+                . ' (see @runTestsInSeparateProcess and @runInSeparateProcess)'
+            );
+        }
+
+        if ($this->getRetryIfExceptionAnnotations()) {
+            throw new LogicException(
+                'Cannot use @retryIfException when @retryInSeparateProcess is set'
+            );
+        }
+
+        if ($this->getRetryIfMethodAnnotation()) {
+            throw new LogicException(
+                'Cannot use @retryInSeparateProcess when @retryIfMethod is set'
+            );
+        }
+
+        return true;
     }
 }
