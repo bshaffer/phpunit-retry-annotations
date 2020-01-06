@@ -176,7 +176,7 @@ class RetryTraitTest extends TestCase
      * @retryInSeparateProcess
      * @runInSeparateProcess
      */
-    public function testRunInSeparateProcess(): void
+    public function testRunInSeparateProcessFailSuccess(): void
     {
         $constantName = 'TEST_CONSTANT';
         $tmpFile = sprintf('/%s/run_in_separate_process', sys_get_temp_dir());
@@ -187,12 +187,36 @@ class RetryTraitTest extends TestCase
             define($constantName, 'Testing this is not defined');
             throw new Exception('Intentional Exception');
         }
-        // $this->fail('Foo');
+
         // Second run
         unlink($tmpFile);
-        $this->fail('Foo');
-        $this->assertTrue(true);
-        // $this->assertFalse(defined($constantName));\
+        $this->assertFalse(defined($constantName));
+    }
+
+    /**
+     * @retryAttempts 1
+     * @retryInSeparateProcess
+     * @runInSeparateProcess
+     */
+    public function testRunInSeparateProcessFailFail(): void
+    {
+        $constantName = 'TEST_CONSTANT';
+        $tmpFile = sprintf('/%s/run_in_separate_process2', sys_get_temp_dir());
+
+        // First run
+        if (!file_exists($tmpFile)) {
+            file_put_contents($tmpFile, '1');
+            define($constantName, 'Testing this is not defined');
+            throw new Exception('Intentional Exception');
+        }
+
+        $this->expectException('Exception');
+        $this->expectExceptionMessage('Intentional Exception 2');
+
+        // Second run
+        unlink($tmpFile);
+        $this->assertFalse(defined($constantName));
+        throw new Exception('Intentional Exception 2');
     }
 
     /**

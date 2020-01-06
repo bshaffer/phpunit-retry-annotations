@@ -269,25 +269,17 @@ trait RetryAnnotationTrait
         $className = get_class($this);
         $name = $this->getName();
 
-        $preserveGlobalState = Test::getPreserveGlobalStateSettings(
-            $className,
-            $name
-        );
-
         $runTestInSeparateProcess = Test::getProcessIsolationSettings(
             $className,
             $name
         );
 
-        $runClassInSeparateProcess = Test::getClassProcessIsolationSettings(
-            $className,
-            $name
-        );
-
-        if (!($runTestInSeparateProcess || $runClassInSeparateProcess)) {
+        if (!$runTestInSeparateProcess) {
             throw new LogicException(
-                'The test must be configured to run in a separate process when @retryInSeparateProcess is set'
-                . ' (see @runTestsInSeparateProcess and @runInSeparateProcess)'
+                'The test must be configured to run in a separate process using'
+                . ' @runTestsInSeparateProcess (on the test class) or'
+                . ' @runInSeparateProcess (on the test method) when'
+                . ' @retryInSeparateProcess is set'
             );
         }
 
@@ -299,7 +291,7 @@ trait RetryAnnotationTrait
 
         if ($this->getRetryIfMethodAnnotation()) {
             throw new LogicException(
-                'Cannot use @retryInSeparateProcess when @retryIfMethod is set'
+                'Cannot use @retryIfMethod when @retryInSeparateProcess is set'
             );
         }
 

@@ -31,18 +31,28 @@ trait RetryTrait
         $retryAttempt = 0;
 
         do {
-            $result->startTest($this);
 
             $newResult = parent::run();
             if ($newResult->wasSuccessful()) {
+                $result->startTest($this);
                 $result->endTest($this, 0);
-                return $result;
+                return $newResult;
             }
 
             $retryAttempt++;
         } while ($this->checkShouldRetryAgain($retryAttempt));
 
-        $result =& $newResult;
+        // Update our result with the most recent result (ignoring retries)
+        foreach ($newResult->warnings() as $warning) {
+            $result->addWarning($this, $warning->thrownException(), 0);
+        }
+        foreach ($newResult->failures() as $failure) {
+            $result->addFailure($this, $failure->thrownException(), 0);
+        }
+        foreach ($newResult->errors() as $error) {
+            $result->addError($this, $error->thrownException(), 0);
+        }
+
         return $result;
     }
 
