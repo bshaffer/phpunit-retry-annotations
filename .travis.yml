@@ -18,8 +18,4 @@ before_install:
 
 script:
   - $COMPOSER_BIN_DIR/php-cs-fixer fix --dry-run --diff .
-  - which phpunit
-  - ls -la vendor
-  - ls -la vendor/bin
-  - phpunit --version
-  - phpunit -v
+  - composer exec phpunit -v
