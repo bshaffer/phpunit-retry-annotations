@@ -18,4 +18,4 @@ before_install:
 
 script:
   - $COMPOSER_BIN_DIR/php-cs-fixer fix --dry-run --diff .
-  - ./vendor/bin/phpunit -v
+  - $TRAVIS_BUILD_DIR/vendor/bin/phpunit -v
