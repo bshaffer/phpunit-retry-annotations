@@ -2,7 +2,6 @@
 
 namespace PHPUnitRetry;
 
-use PHPUnit\Framework\ExceptionWrapper;
 use PHPUnit\Framework\IncompleteTestError;
 use PHPUnit\Framework\SkippedTestError;
 use PHPUnit\Framework\TestResult;
@@ -31,7 +30,6 @@ trait RetryTrait
         $retryAttempt = 0;
 
         do {
-
             $newResult = parent::run();
             if ($newResult->wasSuccessful()) {
                 $result->startTest($this);
