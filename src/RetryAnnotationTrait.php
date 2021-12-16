@@ -9,6 +9,7 @@ use function is_callable;
 use function is_numeric;
 use function sprintf;
 use function var_export;
+use PHPUnit\Util\Test as TestUtil;
 
 /**
  * Trait for validating @retry annotations.
@@ -252,10 +253,6 @@ trait RetryAnnotationTrait
 
     private function getTestAnnotations(): array
     {
-        if (method_exists($this, 'getAnnotations')) {
-            return $this->getAnnotations();
-        }
-
-        return \PHPUnit\Util\Test::parseTestMethodAnnotations(static::class, $this->getName(false));
+        return TestUtil::parseTestMethodAnnotations(static::class, $this->getName(false));
     }
 }
