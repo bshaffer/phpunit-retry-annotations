@@ -18,7 +18,7 @@ trait RetryAnnotationTrait
     private function getRetryAttemptsAnnotation(): int
     {
         $annotations = $this->getAnnotations();
-        $retries = 0;
+        $retries = 2;
 
         if (isset($annotations['method']['retryAttempts'][0])) {
             $retries = $annotations['method']['retryAttempts'][0];
