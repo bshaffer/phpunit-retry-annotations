@@ -49,22 +49,18 @@ trait RetryTrait
 
     private function checkShouldRetryAgain(int $retryAttempt): bool
     {
-        $loggerFactory = new Logger\File\FileLoggerFactory('./failedTests.txt');
-        $logger = $loggerFactory->createLogger();
-
         if ($retryAttempts = $this->getRetryAttemptsAnnotation()) {
             // Maximum retry attempts exceeded
             if ($retryAttempt > $retryAttempts) {
                 return false;
             }
 
-            $logger->log(sprintf(
-                '[RETRY] Retrying test %s: %s of %s' . PHP_EOL,
-                $this->getTestName(),
+            // Log retry
+            printf(
+                '[RETRY] Retrying %s of %s' . PHP_EOL,
                 $retryAttempt,
                 $retryAttempts
-            ));
-
+            );
         } elseif ($retryFor = $this->getRetryForSecondsAnnotation()) {
             if (self::$timeOfFirstRetry === null) {
                 self::$timeOfFirstRetry = time();
@@ -77,12 +73,12 @@ trait RetryTrait
             }
 
             // Log retry
-            $logger->log(sprintf(
+            printf(
                 '[RETRY] Retrying %s (%s %s remaining)' . PHP_EOL,
                 $retryAttempt,
                 $secondsRemaining,
                 $secondsRemaining === 1 ? 'second' : 'seconds'
-            ));
+            );
         } else {
             return false;
         }
