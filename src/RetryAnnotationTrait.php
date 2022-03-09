@@ -3,6 +3,8 @@
 namespace PHPUnitRetry;
 
 use InvalidArgumentException;
+use PHPUnitRetry\Util\Config;
+use PHPUnitRetry\Util\ConfigFile;
 use function array_slice;
 use function explode;
 use function is_callable;
@@ -18,7 +20,9 @@ trait RetryAnnotationTrait
     private function getRetryAttemptsAnnotation(): int
     {
         $annotations = $this->getAnnotations();
-        $retries = 2;
+
+        $config = Config::getInstance(ConfigFile::getConfigFilename());
+        $retries = $config->getRetryCount();
 
         if (isset($annotations['method']['retryAttempts'][0])) {
             $retries = $annotations['method']['retryAttempts'][0];
