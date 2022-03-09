@@ -10,12 +10,10 @@ final class ConfigFile
 
         if (file_exists($cwd . 'phpunit-retry.xml')) {
             $configFilename = $cwd . 'phpunit-retry.xml';
-        } elseif (file_exists($cwd . 'phpunit-retry.xml.dist')) {
-            $configFilename = $cwd . 'phpunit-retry.xml.dist';
         } else {
-            return null;
+            return dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'phpunit-retry.xml';
         }
-        
+
         return $configFilename;
     }
 }
