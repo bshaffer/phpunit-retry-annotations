@@ -1,0 +1,102 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Cannot call method getAttribute\\(\\) on DOMElement\\|null\\.$#"
+			count: 1
+			path: src/Util/Config.php
+
+		-
+			message: "#^Cannot call method hasAttribute\\(\\) on DOMElement\\|null\\.$#"
+			count: 1
+			path: src/Util/Config.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of static method PHPUnitRetry\\\\Util\\\\Config\\:\\:getInstance\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: tests/RetryAnnotationTraitTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$retries of method PHPUnitRetry\\\\Tests\\\\RetryAnnotationTraitTest\\:\\:parseRetryAttemptsAnnotation\\(\\) expects string, int given\\.$#"
+			count: 1
+			path: tests/RetryAnnotationTraitTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$retryDelaySeconds of method PHPUnitRetry\\\\Tests\\\\RetryAnnotationTraitTest\\:\\:parseRetryDelaySecondsAnnotation\\(\\) expects string, int given\\.$#"
+			count: 1
+			path: tests/RetryAnnotationTraitTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$retryForSeconds of method PHPUnitRetry\\\\Tests\\\\RetryAnnotationTraitTest\\:\\:parseRetryForSecondsAnnotation\\(\\) expects string, float given\\.$#"
+			count: 1
+			path: tests/RetryAnnotationTraitTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$retryForSeconds of method PHPUnitRetry\\\\Tests\\\\RetryAnnotationTraitTest\\:\\:parseRetryForSecondsAnnotation\\(\\) expects string, int given\\.$#"
+			count: 3
+			path: tests/RetryAnnotationTraitTest.php
+
+		-
+			message: "#^Method PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\:\\:customDelayMethod\\(\\) has parameter \\$attempt with no type specified\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Method PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\:\\:customRetryIfMethod\\(\\) has parameter \\$e with no type specified\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Method PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\:\\:executeRetryDelayFunction\\(\\) never returns int so it can be removed from the return type\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Method PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\:\\:exponentialBackoff\\(\\) has parameter \\$maxDelaySeconds with no type specified\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Method PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\:\\:exponentialBackoff\\(\\) has parameter \\$retryAttempt with no type specified\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^PHPDoc tag @var above a method has no effect\\.$#"
+			count: 2
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of static method PHPUnitRetry\\\\Util\\\\Config\\:\\:getInstance\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$function of function call_user_func_array expects callable\\(\\)\\: mixed, array\\{\\$this\\(PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\), mixed\\} given\\.$#"
+			count: 2
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Property PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\:\\:\\$customDelayMethodCalled has no type specified\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Property PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\:\\:\\$customRetryIfMethodCalled has no type specified\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Property PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\:\\:\\$timeOfFirstRetry has no type specified\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Property PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\:\\:\\$timesCalled has no type specified\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
+		-
+			message: "#^Property PHPUnitRetry\\\\Tests\\\\RetryTraitTest\\:\\:\\$timestampCalled has no type specified\\.$#"
+			count: 1
+			path: tests/RetryTraitTest.php
+
