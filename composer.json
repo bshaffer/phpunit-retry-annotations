@@ -32,5 +32,11 @@
         "phpcbf": "phpcbf -n .",
         "phpstan": "phpstan analyse --no-progress --level=max . -c phpstan.neon",
         "tests": "phpunit --testsuite=unit",
+        "ci": [
+            "@phpcs",
+            "@phpcs-compatibility",
+            "@phpstan",
+            "@tests"
+        ]
     }
 }
