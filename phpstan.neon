@@ -1,0 +1,11 @@
+parameters:
+    tmpDir: cache/.phpstan
+    parallel:
+        processTimeout: 300.0
+    checkMissingIterableValueType: false
+    excludePaths:
+        - vendor
+includes:
+    - phpstan-baseline.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
