@@ -11,7 +11,7 @@ final class Config
 {
     const DEFAULT_RETRY_COUNT = 3;
     /** @var \DOMDocument */
-    private  $document;
+    private $document;
     
     public static function getInstance(string $filename): self
     {
