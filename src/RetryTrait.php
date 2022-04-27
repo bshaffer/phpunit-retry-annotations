@@ -104,7 +104,12 @@ trait RetryTrait
             [$retryIfMethod, $retryIfMethodArgs] = $retryIfMethodAnnotation;
 
             array_unshift($retryIfMethodArgs, $e);
-            call_user_func_array([$this, $retryIfMethod], $retryIfMethodArgs);
+            $callback = [$this, $retryIfMethod];
+            if (is_callable($callback)) {
+                call_user_func_array($callback, $retryIfMethodArgs);
+            } else {
+                throw new Exception('Method not found');
+            }
         }
 
         // Retry all exceptions by default
@@ -118,7 +123,12 @@ trait RetryTrait
         } elseif ($delayMethodAnnotation = $this->getRetryDelayMethodAnnotation()) {
             [$delayMethod, $delayMethodArgs] = $delayMethodAnnotation;
             array_unshift($delayMethodArgs, $retryAttempt);
-            call_user_func_array([$this, $delayMethod], $delayMethodArgs);
+            $callback = [$this, $delayMethod];
+            if (is_callable($callback)) {
+                call_user_func_array($callback, $delayMethodArgs);
+            } else {
+                throw new Exception('Method not found');
+            }
         }
     }
 

@@ -33,7 +33,7 @@ trait RetryAnnotationTrait
         return $this->parseRetryAttemptsAnnotation($retries);
     }
 
-    /** @var string|int $retries */
+    /** @param string|int $retries */
     private function parseRetryAttemptsAnnotation($retries): int
     {
         if ('' === $retries) {
@@ -77,7 +77,7 @@ trait RetryAnnotationTrait
         return $this->parseRetryDelaySecondsAnnotation($retryDelaySeconds);
     }
 
-    /** @var string|int $retryDelaySeconds */
+    /** @param string|int $retryDelaySeconds */
     private function parseRetryDelaySecondsAnnotation($retryDelaySeconds): int
     {
         if ('' === $retryDelaySeconds) {
@@ -160,7 +160,7 @@ trait RetryAnnotationTrait
         return $this->parseRetryForSecondsAnnotation($retryForSeconds);
     }
 
-    /** @var string|int $retryForSeconds */
+    /** @param string|int|float $retryForSeconds */
     private function parseRetryForSecondsAnnotation($retryForSeconds): int
     {
         if ('' === $retryForSeconds) {
