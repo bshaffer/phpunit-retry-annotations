@@ -1,17 +1,10 @@
 {
-    "name": "bshaffer/phpunit-retry-annotations",
+    "name": "keboola/phpunit-retry-annotations",
     "description": "Traits for retrying test methods and classes in PHPUnit",
     "keywords": ["test", "retry", "phpunit"],
-    "homepage": "https://github.com/bshaffer/phpunit-retry",
+    "homepage": "https://github.com/keboola/phpunit-retry-annotations",
     "type": "library",
     "license": "Apache-2.0",
-    "authors": [
-        {
-            "name": "Brent Shaffer",
-            "email": "bshafs@gmail.com",
-            "homepage": "https://brentertainment.com"
-        }
-    ],
     "require": {
         "php": "^7.1|^8.0"
     },
