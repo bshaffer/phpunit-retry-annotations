@@ -24,7 +24,9 @@ class RetryTraitTest extends TestCase
 
     public function testNoRetryAnnotationsDoesNotRetry(): void
     {
-        $this->assertFalse($this->checkShouldRetryAgain(1));
+        // 3 is default count for retries
+        $this->assertSame(3, $this->getRetryAttemptsAnnotation());
+        $this->assertTrue($this->checkShouldRetryAgain(1));
     }
 
     /**
