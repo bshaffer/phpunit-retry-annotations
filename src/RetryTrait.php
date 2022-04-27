@@ -18,7 +18,7 @@ trait RetryTrait
 {
     use RetryAnnotationTrait;
 
-    private static $timeOfFirstRetry;
+    private static ?int $timeOfFirstRetry;
 
     /**
      * Main test loop to implement retry annotations.
@@ -111,7 +111,7 @@ trait RetryTrait
         return true;
     }
 
-    private function executeRetryDelayFunction(int $retryAttempt): ?int
+    private function executeRetryDelayFunction(int $retryAttempt): void
     {
         if ($delaySeconds = $this->getRetryDelaySecondsAnnotation()) {
             sleep($delaySeconds);
@@ -120,8 +120,6 @@ trait RetryTrait
             array_unshift($delayMethodArgs, $retryAttempt);
             call_user_func_array([$this, $delayMethod], $delayMethodArgs);
         }
-
-        return null;
     }
 
     /**
@@ -145,7 +143,7 @@ trait RetryTrait
      *  * @retryDelayMethod exponentialBackoff 3600
      *  * ...
      */
-    private function exponentialBackoff($retryAttempt, $maxDelaySeconds = 60): void
+    private function exponentialBackoff(int $retryAttempt, int $maxDelaySeconds = 60): void
     {
         $sleep = min(
             mt_rand(0, 1000000) + (pow(2, $retryAttempt) * 1000000),

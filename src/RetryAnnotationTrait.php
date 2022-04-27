@@ -33,7 +33,8 @@ trait RetryAnnotationTrait
         return $this->parseRetryAttemptsAnnotation($retries);
     }
 
-    private function parseRetryAttemptsAnnotation(string $retries): int
+    /** @var string|int $retries */
+    private function parseRetryAttemptsAnnotation($retries): int
     {
         if ('' === $retries) {
             throw new InvalidArgumentException(
@@ -76,7 +77,8 @@ trait RetryAnnotationTrait
         return $this->parseRetryDelaySecondsAnnotation($retryDelaySeconds);
     }
 
-    private function parseRetryDelaySecondsAnnotation(string $retryDelaySeconds): int
+    /** @var string|int $retryDelaySeconds */
+    private function parseRetryDelaySecondsAnnotation($retryDelaySeconds): int
     {
         if ('' === $retryDelaySeconds) {
             throw new InvalidArgumentException(
@@ -158,7 +160,8 @@ trait RetryAnnotationTrait
         return $this->parseRetryForSecondsAnnotation($retryForSeconds);
     }
 
-    private function parseRetryForSecondsAnnotation(string $retryForSeconds): int
+    /** @var string|int $retryForSeconds */
+    private function parseRetryForSecondsAnnotation($retryForSeconds): int
     {
         if ('' === $retryForSeconds) {
             throw new InvalidArgumentException(
