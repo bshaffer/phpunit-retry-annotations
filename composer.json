@@ -22,11 +22,14 @@
         "phpunit/phpunit": "^7.0|^8.0",
         "friendsofphp/php-cs-fixer": "^2",
         "squizlabs/php_codesniffer": "^3.6",
-        "phpcompatibility/php-compatibility": "^9.3"
+        "phpcompatibility/php-compatibility": "^9.3",
+        "phpstan/phpstan": "^1.6",
+        "phpstan/phpstan-phpunit": "^1.1"
     },
     "scripts": {
         "phpcs": "phpcs -n .",
         "phpcs-compatibility": "phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility && phpcs --ignore=*vendor/*,*cache/* -n . --standard=PHPCompatibility --runtime-set testVersion 7.4-8.1",
         "phpcbf": "phpcbf -n .",
+        "phpstan": "phpstan analyse --no-progress --level=max . -c phpstan.neon",
     }
 }
