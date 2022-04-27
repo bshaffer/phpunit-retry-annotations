@@ -8,3 +8,9 @@ services:
     <<: *base
     volumes:
       - ./:/code
+  dev-xdebug:
+    <<: *dev
+    build:
+      context: docker/xdebug
+    image: keboola/phpunit-retry-annotations-xdebug
+    command: tail -f /dev/null
