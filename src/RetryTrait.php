@@ -18,7 +18,7 @@ trait RetryTrait
 {
     use RetryAnnotationTrait;
 
-    private static ?int $timeOfFirstRetry;
+    private static ?int $timeOfFirstRetry = null;
 
     /**
      * Main test loop to implement retry annotations.
@@ -26,7 +26,6 @@ trait RetryTrait
     public function runBare(): void
     {
         $retryAttempt = 0;
-        self::$timeOfFirstRetry = null;
 
         do {
             try {
