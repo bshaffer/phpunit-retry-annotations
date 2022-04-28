@@ -39,4 +39,4 @@ jobs:
       -
         name: Build docker image
         run: |
-          docker-compose build tests
+          docker-compose build dev

@@ -1,13 +1,11 @@
 version: '2'
 services:
-  tests: &base
+  dev: &dev
     build:
       context: .
-    image: keboola/phpunit-retry-annotations
-  dev: &dev
-    <<: *base
     volumes:
       - ./:/code
+    image: keboola/phpunit-retry-annotations
   dev-xdebug:
     <<: *dev
     build:
