@@ -18,7 +18,7 @@ trait RetryTrait
 {
     use RetryAnnotationTrait;
 
-    private static $timeOfFirstRetry;
+    private static ?int $timeOfFirstRetry = null;
 
     /**
      * Main test loop to implement retry annotations.
@@ -26,7 +26,6 @@ trait RetryTrait
     public function runBare(): void
     {
         $retryAttempt = 0;
-        self::$timeOfFirstRetry = null;
 
         do {
             try {
@@ -104,24 +103,32 @@ trait RetryTrait
             [$retryIfMethod, $retryIfMethodArgs] = $retryIfMethodAnnotation;
 
             array_unshift($retryIfMethodArgs, $e);
-            call_user_func_array([$this, $retryIfMethod], $retryIfMethodArgs);
+            $callback = [$this, $retryIfMethod];
+            if (is_callable($callback)) {
+                call_user_func_array($callback, $retryIfMethodArgs);
+            } else {
+                throw new Exception('Method not found');
+            }
         }
 
         // Retry all exceptions by default
         return true;
     }
 
-    private function executeRetryDelayFunction(int $retryAttempt): ?int
+    private function executeRetryDelayFunction(int $retryAttempt): void
     {
         if ($delaySeconds = $this->getRetryDelaySecondsAnnotation()) {
             sleep($delaySeconds);
         } elseif ($delayMethodAnnotation = $this->getRetryDelayMethodAnnotation()) {
             [$delayMethod, $delayMethodArgs] = $delayMethodAnnotation;
             array_unshift($delayMethodArgs, $retryAttempt);
-            call_user_func_array([$this, $delayMethod], $delayMethodArgs);
+            $callback = [$this, $delayMethod];
+            if (is_callable($callback)) {
+                call_user_func_array($callback, $delayMethodArgs);
+            } else {
+                throw new Exception('Method not found');
+            }
         }
-
-        return null;
     }
 
     /**
@@ -145,7 +152,7 @@ trait RetryTrait
      *  * @retryDelayMethod exponentialBackoff 3600
      *  * ...
      */
-    private function exponentialBackoff($retryAttempt, $maxDelaySeconds = 60): void
+    private function exponentialBackoff(int $retryAttempt, int $maxDelaySeconds = 60): void
     {
         $sleep = min(
             mt_rand(0, 1000000) + (pow(2, $retryAttempt) * 1000000),

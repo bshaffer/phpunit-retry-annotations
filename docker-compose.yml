@@ -1,0 +1,14 @@
+version: '2'
+services:
+  dev: &dev
+    build:
+      context: .
+    volumes:
+      - ./:/code
+    image: keboola/phpunit-retry-annotations
+  dev-xdebug:
+    <<: *dev
+    build:
+      context: docker/xdebug
+    image: keboola/phpunit-retry-annotations-xdebug
+    command: tail -f /dev/null

@@ -4,7 +4,7 @@ namespace PHPUnitRetry\Util;
 
 final class ConfigFile
 {
-    public static function getConfigFilename(): ?string
+    public static function getConfigFilename(): string
     {
         $cwd = getcwd() . \DIRECTORY_SEPARATOR;
 

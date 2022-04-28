@@ -5,11 +5,12 @@ Traits for retrying test methods and classes in PHPUnit.
 ## Installation
 
 ```
-composer require --dev bshaffer/phpunit-retry-annotations
+composer require --dev keboola/phpunit-retry-annotations
 ```
 
 ## Configuring retries
-
+The default retries count is set to 3, when you want to change default retries for all tests copy&paste file `phpunit-retry.xml.dist` from this library into the root directory
+of your application and change value of `baseRetryCount`
 ### Retry using a specified number of retries
 
 ```php

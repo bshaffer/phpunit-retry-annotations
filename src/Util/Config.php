@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace PHPUnitRetry\Util;
 
+use DOMDocument;
+use DOMElement;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Util\Xml;
 
 final class Config
 {
     const DEFAULT_RETRY_COUNT = 3;
-    /** @var \DOMDocument */
-    private  $document;
+
+    private DOMDocument $document;
     
     public static function getInstance(string $filename): self
     {
@@ -36,6 +38,7 @@ final class Config
     
     public function getRetryCount(): int
     {
+        /** @var DOMElement $root */
         $root = $this->document->documentElement;
 
         if ($root->hasAttribute('baseRetryCount')) {

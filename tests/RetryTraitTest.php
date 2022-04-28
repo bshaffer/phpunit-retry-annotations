@@ -17,14 +17,16 @@ class RetryTraitTest extends TestCase
 {
     use RetryTrait;
 
-    private static $timesCalled = 0;
-    private static $timestampCalled;
-    private static $customDelayMethodCalled = false;
-    private static $customRetryIfMethodCalled = false;
+    private static int $timesCalled = 0;
+    private static ?int $timestampCalled;
+    private static bool $customDelayMethodCalled = false;
+    private static bool $customRetryIfMethodCalled = false;
 
     public function testNoRetryAnnotationsDoesNotRetry(): void
     {
-        $this->assertFalse($this->checkShouldRetryAgain(1));
+        // 3 is default count for retries
+        $this->assertSame(3, $this->getRetryAttemptsAnnotation());
+        $this->assertTrue($this->checkShouldRetryAgain(1));
     }
 
     /**
@@ -171,10 +173,7 @@ class RetryTraitTest extends TestCase
         self::$timesCalled = 0;
     }
 
-    /**
-     * @var int $attempt
-     */
-    private function customDelayMethod($attempt): void
+    private function customDelayMethod(int $attempt): void
     {
         $this->assertIsInt($attempt);
         $this->assertEquals(1, $attempt);
@@ -185,10 +184,7 @@ class RetryTraitTest extends TestCase
         self::$customDelayMethodCalled = true;
     }
 
-    /**
-     * @var Exception $e
-     */
-    private function customRetryIfMethod($e): void
+    private function customRetryIfMethod(Exception $e): void
     {
         $this->assertInstanceOf('Exception', $e);
 
