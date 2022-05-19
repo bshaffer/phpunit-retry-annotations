@@ -14,7 +14,7 @@ final class Config
     const DEFAULT_RETRY_COUNT = 3;
 
     private DOMDocument $document;
-    
+
     public static function getInstance(string $filename): self
     {
         $realPath = \realpath($filename);
@@ -30,12 +30,12 @@ final class Config
 
         return new self($realPath);
     }
-    
+
     private function __construct(string $filename)
     {
-        $this->document = Xml::loadFile($filename, false, true, true);
+        $this->document = (new Xml\Loader)->loadFile($filename, false, true, true);
     }
-    
+
     public function getRetryCount(): int
     {
         /** @var DOMElement $root */
@@ -46,7 +46,7 @@ final class Config
                 (string) $root->getAttribute('baseRetryCount')
             );
         }
-        
+
         return self::DEFAULT_RETRY_COUNT;
     }
 

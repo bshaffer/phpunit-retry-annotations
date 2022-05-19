@@ -3,6 +3,7 @@
 namespace PHPUnitRetry;
 
 use InvalidArgumentException;
+use PHPUnit\Util\Test;
 use PHPUnitRetry\Util\Config;
 use PHPUnitRetry\Util\ConfigFile;
 use function array_slice;
@@ -19,7 +20,7 @@ trait RetryAnnotationTrait
 {
     private function getRetryAttemptsAnnotation(): int
     {
-        $annotations = $this->getAnnotations();
+        $annotations = Test::parseTestMethodAnnotations(get_class($this), $this->getName());
 
         $config = Config::getInstance(ConfigFile::getConfigFilename());
         $retries = $config->getRetryCount();
@@ -65,7 +66,7 @@ trait RetryAnnotationTrait
 
     private function getRetryDelaySecondsAnnotation(): int
     {
-        $annotations = $this->getAnnotations();
+        $annotations = Test::parseTestMethodAnnotations(get_class($this), $this->getName());
         $retryDelaySeconds = 0;
 
         if (isset($annotations['method']['retryDelaySeconds'][0])) {
@@ -109,7 +110,7 @@ trait RetryAnnotationTrait
 
     private function getRetryDelayMethodAnnotation(): ?array
     {
-        $annotations = $this->getAnnotations();
+        $annotations = Test::parseTestMethodAnnotations(get_class($this), $this->getName());
 
         if (isset($annotations['method']['retryDelayMethod'][0])) {
             $delayAnnotation = $annotations['method']['retryDelayMethod'];
@@ -147,7 +148,7 @@ trait RetryAnnotationTrait
 
     private function getRetryForSecondsAnnotation(): ?int
     {
-        $annotations = $this->getAnnotations();
+        $annotations = Test::parseTestMethodAnnotations(get_class($this), $this->getName());
 
         if (isset($annotations['method']['retryForSeconds'][0])) {
             $retryForSeconds = $annotations['method']['retryForSeconds'][0];
@@ -192,7 +193,7 @@ trait RetryAnnotationTrait
 
     private function getRetryIfExceptionAnnotations(): ?array
     {
-        $annotations = $this->getAnnotations();
+        $annotations = Test::parseTestMethodAnnotations(get_class($this), $this->getName());
 
         if (isset($annotations['method']['retryIfException'][0])) {
             $retryIfExceptions = [];
@@ -202,7 +203,7 @@ trait RetryAnnotationTrait
             }
             return $retryIfExceptions;
         }
-        
+
         return null;
     }
 
@@ -224,7 +225,7 @@ trait RetryAnnotationTrait
 
     private function getRetryIfMethodAnnotation(): ?array
     {
-        $annotations = $this->getAnnotations();
+        $annotations = Test::parseTestMethodAnnotations(get_class($this), $this->getName());
 
         if (!isset($annotations['method']['retryIfMethod'][0])) {
             return null;
@@ -235,7 +236,7 @@ trait RetryAnnotationTrait
         $retryIfMethodArgs = array_slice($retryIfMethodAnnotation, 1);
 
         $this->validateRetryIfMethodAnnotation($retryIfMethod);
-        
+
         return [
             $retryIfMethod,
             $retryIfMethodArgs,
