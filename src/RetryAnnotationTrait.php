@@ -253,6 +253,12 @@ trait RetryAnnotationTrait
 
     private function getTestAnnotations(): array
     {
-        return TestUtil::parseTestMethodAnnotations(static::class, $this->getName(false));
+        $inheritedAnnotations = array_reduce(class_parents($this), function ($memo, $class) {
+            return array_replace_recursive($memo, TestUtil::parseTestMethodAnnotations($class));
+        }, []);
+
+        $annotations = TestUtil::parseTestMethodAnnotations(static::class, $this->getName(false));
+
+        return array_replace_recursive($inheritedAnnotations, $annotations);
     }
 }
