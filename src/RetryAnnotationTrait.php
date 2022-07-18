@@ -9,6 +9,7 @@ use function is_callable;
 use function is_numeric;
 use function sprintf;
 use function var_export;
+use PHPUnit\Util\Test as TestUtil;
 
 /**
  * Trait for validating @retry annotations.
@@ -17,7 +18,7 @@ trait RetryAnnotationTrait
 {
     private function getRetryAttemptsAnnotation(): int
     {
-        $annotations = $this->getAnnotations();
+        $annotations = $this->getTestAnnotations();
         $retries = 0;
 
         if (isset($annotations['method']['retryAttempts'][0])) {
@@ -60,7 +61,7 @@ trait RetryAnnotationTrait
 
     private function getRetryDelaySecondsAnnotation(): int
     {
-        $annotations = $this->getAnnotations();
+        $annotations = $this->getTestAnnotations();
         $retryDelaySeconds = 0;
 
         if (isset($annotations['method']['retryDelaySeconds'][0])) {
@@ -103,7 +104,7 @@ trait RetryAnnotationTrait
 
     private function getRetryDelayMethodAnnotation(): ?array
     {
-        $annotations = $this->getAnnotations();
+        $annotations = $this->getTestAnnotations();
 
         if (isset($annotations['method']['retryDelayMethod'][0])) {
             $delayAnnotation = $annotations['method']['retryDelayMethod'];
@@ -141,7 +142,7 @@ trait RetryAnnotationTrait
 
     private function getRetryForSecondsAnnotation(): ?int
     {
-        $annotations = $this->getAnnotations();
+        $annotations = $this->getTestAnnotations();
 
         if (isset($annotations['method']['retryForSeconds'][0])) {
             $retryForSeconds = $annotations['method']['retryForSeconds'][0];
@@ -185,7 +186,7 @@ trait RetryAnnotationTrait
 
     private function getRetryIfExceptionAnnotations(): ?array
     {
-        $annotations = $this->getAnnotations();
+        $annotations = $this->getTestAnnotations();
 
         if (isset($annotations['method']['retryIfException'][0])) {
             $retryIfExceptions = [];
@@ -217,7 +218,7 @@ trait RetryAnnotationTrait
 
     private function getRetryIfMethodAnnotation(): ?array
     {
-        $annotations = $this->getAnnotations();
+        $annotations = $this->getTestAnnotations();
 
         if (!isset($annotations['method']['retryIfMethod'][0])) {
             return null;
@@ -248,5 +249,10 @@ trait RetryAnnotationTrait
                 $retryIfMethod
             ));
         }
+    }
+
+    private function getTestAnnotations(): array
+    {
+        return TestUtil::parseTestMethodAnnotations(static::class, $this->getName(false));
     }
 }
