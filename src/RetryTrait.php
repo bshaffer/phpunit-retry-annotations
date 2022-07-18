@@ -104,7 +104,7 @@ trait RetryTrait
             [$retryIfMethod, $retryIfMethodArgs] = $retryIfMethodAnnotation;
 
             array_unshift($retryIfMethodArgs, $e);
-            call_user_func_array([$this, $retryIfMethod], $retryIfMethodArgs);
+            return call_user_func_array([$this, $retryIfMethod], $retryIfMethodArgs);
         }
 
         // Retry all exceptions by default
