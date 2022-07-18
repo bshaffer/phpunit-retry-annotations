@@ -236,7 +236,7 @@ class RetryTraitTest extends TestCase
     /**
      * @var Exception $e
      */
-    private function customRetryIfMethod($e): void
+    private function customRetryIfMethod($e): bool
     {
         $this->assertInstanceOf('Exception', $e);
 
@@ -244,5 +244,7 @@ class RetryTraitTest extends TestCase
         $this->assertCount(2, $args = func_get_args());
         $this->assertEquals('foo', $args[1]);
         self::$customRetryIfMethodCalled = true;
+
+        return true;
     }
 }
