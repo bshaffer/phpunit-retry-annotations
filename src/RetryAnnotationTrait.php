@@ -3,6 +3,8 @@
 namespace PHPUnitRetry;
 
 use InvalidArgumentException;
+use LogicException;
+use PHPUnit\Util\Test;
 use function array_slice;
 use function explode;
 use function is_callable;
@@ -196,7 +198,7 @@ trait RetryAnnotationTrait
             }
             return $retryIfExceptions;
         }
-        
+
         return null;
     }
 
@@ -229,7 +231,7 @@ trait RetryAnnotationTrait
         $retryIfMethodArgs = array_slice($retryIfMethodAnnotation, 1);
 
         $this->validateRetryIfMethodAnnotation($retryIfMethod);
-        
+
         return [
             $retryIfMethod,
             $retryIfMethodArgs,
@@ -251,6 +253,52 @@ trait RetryAnnotationTrait
         }
     }
 
+    private function retryInSeparateProcess(): bool
+    {
+        $annotations = $this->getTestAnnotations();
+
+        if (!isset($annotations['method']['retryInSeparateProcess'][0])) {
+            return false;
+        }
+
+        if ('' !== $annotations['method']['retryInSeparateProcess'][0]) {
+            throw new InvalidArgumentException(
+                'The @retryInSeparateProcess annotation does not take an argument'
+            );
+        }
+
+        $className = get_class($this);
+        $name = $this->getName();
+
+        $runTestInSeparateProcess = Test::getProcessIsolationSettings(
+            $className,
+            $name
+        );
+
+        if (!$runTestInSeparateProcess) {
+            throw new LogicException(
+                'The test must be configured to run in a separate process using'
+                . ' @runTestsInSeparateProcess (on the test class) or'
+                . ' @runInSeparateProcess (on the test method) when'
+                . ' @retryInSeparateProcess is set'
+            );
+        }
+
+        if ($this->getRetryIfExceptionAnnotations()) {
+            throw new LogicException(
+                'Cannot use @retryIfException when @retryInSeparateProcess is set'
+            );
+        }
+
+        if ($this->getRetryIfMethodAnnotation()) {
+            throw new LogicException(
+                'Cannot use @retryIfMethod when @retryInSeparateProcess is set'
+            );
+        }
+
+        return true;
+    }
+    
     private function getTestAnnotations(): array
     {
         $inheritedAnnotations = array_reduce(class_parents($this), function ($memo, $class) {

@@ -4,10 +4,10 @@ namespace PHPUnitRetry;
 
 use PHPUnit\Framework\IncompleteTestError;
 use PHPUnit\Framework\SkippedTestError;
+use PHPUnit\Framework\TestResult;
 use Exception;
 use function array_unshift;
 use function call_user_func_array;
-use function printf;
 use function sleep;
 use function time;
 
@@ -19,6 +19,40 @@ trait RetryTrait
     use RetryAnnotationTrait;
 
     private static $timeOfFirstRetry;
+    private static $retryAttempt;
+
+    public function run(TestResult $result = null): TestResult
+    {
+        if ($this->isInIsolation() || !$this->retryInSeparateProcess()) {
+            return parent::run($result);
+        }
+
+        $retryAttempt = 0;
+
+        do {
+            $newResult = parent::run();
+            if ($newResult->wasSuccessful()) {
+                $result->startTest($this);
+                $result->endTest($this, 0);
+                return $newResult;
+            }
+
+            $retryAttempt++;
+        } while ($this->checkShouldRetryAgain($retryAttempt));
+
+        // Update our result with the most recent result (ignoring retries)
+        foreach ($newResult->warnings() as $warning) {
+            $result->addWarning($this, $warning->thrownException(), 0);
+        }
+        foreach ($newResult->failures() as $failure) {
+            $result->addFailure($this, $failure->thrownException(), 0);
+        }
+        foreach ($newResult->errors() as $error) {
+            $result->addError($this, $error->thrownException(), 0);
+        }
+
+        return $result;
+    }
 
     /**
      * Main test loop to implement retry annotations.
@@ -26,7 +60,6 @@ trait RetryTrait
     public function runBare(): void
     {
         $retryAttempt = 0;
-        self::$timeOfFirstRetry = null;
 
         do {
             try {
@@ -38,6 +71,11 @@ trait RetryTrait
                 throw $e;
             } catch (Exception $e) {
             }
+            // Do not retry when the process is in isolation
+            if ($this->isInIsolation()) {
+                throw $e;
+            }
+            // Only retry if the exception meets retry criteria
             if (!$this->checkShouldRetryForException($e)) {
                 throw $e;
             }
@@ -56,11 +94,11 @@ trait RetryTrait
             }
 
             // Log retry
-            printf(
+            fwrite(STDOUT, sprintf(
                 '[RETRY] Retrying %s of %s' . PHP_EOL,
                 $retryAttempt,
                 $retryAttempts
-            );
+            ));
         } elseif ($retryFor = $this->getRetryForSecondsAnnotation()) {
             if (self::$timeOfFirstRetry === null) {
                 self::$timeOfFirstRetry = time();
@@ -73,12 +111,12 @@ trait RetryTrait
             }
 
             // Log retry
-            printf(
+            fwrite(STDOUT, sprintf(
                 '[RETRY] Retrying %s (%s %s remaining)' . PHP_EOL,
                 $retryAttempt,
                 $secondsRemaining,
                 $secondsRemaining === 1 ? 'second' : 'seconds'
-            );
+            ));
         } else {
             return false;
         }
