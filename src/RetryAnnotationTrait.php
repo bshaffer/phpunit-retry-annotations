@@ -255,7 +255,7 @@ trait RetryAnnotationTrait
 
     private function retryInSeparateProcess(): bool
     {
-        $annotations = $this->getAnnotations();
+        $annotations = $this->getTestAnnotations();
 
         if (!isset($annotations['method']['retryInSeparateProcess'][0])) {
             return false;
