@@ -6,10 +6,11 @@ final class ConfigFile
 {
     public static function getConfigFilename(): string
     {
-        $cwd = getcwd() . \DIRECTORY_SEPARATOR;
+        $segments = explode(DIRECTORY_SEPARATOR, __DIR__);
+        $rootDirectory = DIRECTORY_SEPARATOR . $segments[1];
 
-        if (file_exists($cwd . 'phpunit-retry.xml')) {
-            $configFilename = $cwd . 'phpunit-retry.xml';
+        if (file_exists($rootDirectory . \DIRECTORY_SEPARATOR . 'phpunit-retry.xml')) {
+            $configFilename = $rootDirectory . \DIRECTORY_SEPARATOR . 'phpunit-retry.xml';
         } else {
             return dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'phpunit-retry.xml';
         }
