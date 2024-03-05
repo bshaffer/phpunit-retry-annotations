@@ -5,6 +5,11 @@ parameters:
     checkMissingIterableValueType: false
     excludePaths:
         - vendor
+    ignoreErrors:
+       - message: '#^Method PHPUnitRetry\\Tests\\RetryAnnotationTraitTest::([a-zA-Z0-9_]+)\(\) is unused\.$#'
+         path: %currentWorkingDirectory%/tests/RetryAnnotationTraitTest.php
+       - message: '#^Method PHPUnitRetry\\Tests\\RetryTraitTest::([a-zA-Z_]+)\(\) is unused\.$#'
+         path: %currentWorkingDirectory%/tests/RetryTraitTest.php
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon

@@ -44,7 +44,7 @@ class ConfigTest extends TestCase
     public function testMissingFile(): void
     {
         $this->expectException(Exception::class);
-        $this->expectErrorMessage('Could not read "missing-file.xml".');
+        $this->expectExceptionMessage('Could not read "missing-file.xml".');
         Config::getInstance('missing-file.xml');
     }
 }
